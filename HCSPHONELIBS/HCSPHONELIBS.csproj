@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{32BBA895-47EA-416C-98E1-9F6680F5AAF9}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>com</RootNamespace>
+    <AssemblyName>HCSPHONELIBS</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>12.0.51020.0</ExpressionBlendVersion>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="Alchemy, Version=2.2.0.238, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Alchemy-Websockets-master\src\Alchemy\bin\Debug\Alchemy.dll</HintPath>
+    </Reference>
+    <Reference Include="codentq">
+      <HintPath>..\..\..\..\..\..\binaries\codentq.dll</HintPath>
+    </Reference>
+    <Reference Include="FirebirdSql.Data.FirebirdClient">
+      <HintPath>..\..\..\..\..\..\..\NETProvider-3.0.2.0-NET40\FirebirdSql.Data.FirebirdClient.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\MahApps.Metro-master\MahApps.Metro\bin\Debug\MahApps.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro.Resources, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\MahApps.Metro-master\MahApps.Metro.Resources\bin\Debug\MahApps.Metro.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Effects" />
+    <Reference Include="Microsoft.Expression.Interactions" />
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NAudio">
+      <HintPath>..\..\..\..\..\..\..\CLOUD\SkyDrive\DEV\C#\NAudio-Source\NAudio\bin\Debug\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="system.windows.controls.layout.toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\MahApps.Metro-master\MahApps.Metro\bin\Debug\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\binaries\Extended WPF Toolkit Binaries (1)\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.4.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\binaries\Extended WPF Toolkit Binaries (1)\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Com\Huen\Commands\CustCommands.cs" />
+    <Compile Include="Com\Huen\Controldata\HospitalInfo.cs" />
+    <Compile Include="Com\Huen\Converter\ChangeInt2Color.cs" />
+    <Compile Include="Com\Huen\Converter\CallStatusChangeFontColor.cs" />
+    <Compile Include="Com\Huen\Converter\CallStatusChk.cs" />
+    <Compile Include="Com\Huen\Converter\CallStatusFontWeight.cs" />
+    <Compile Include="Com\Huen\Converter\BirthStatus.cs" />
+    <Compile Include="Com\Huen\Converter\Num2Ordinal.cs" />
+    <Compile Include="Com\Huen\Converter\Time2Text.cs" />
+    <Compile Include="Com\Huen\Converter\ConverterRate2Text.cs" />
+    <Compile Include="Com\Huen\Converter\Int2Language.cs" />
+    <Compile Include="Com\Huen\Converter\FeeDelay.cs" />
+    <Compile Include="Com\Huen\Converter\FeeDelayColor.cs" />
+    <Compile Include="Com\Huen\Converter\FeeStatus.cs" />
+    <Compile Include="Com\Huen\Converter\WordShorter.cs" />
+    <Compile Include="Com\Huen\DataModel\Absence.cs" />
+    <Compile Include="Com\Huen\DataModel\BILLException.cs" />
+    <Compile Include="Com\Huen\DataModel\Caller.cs" />
+    <Compile Include="Com\Huen\DataModel\CallingList.cs" />
+    <Compile Include="Com\Huen\DataModel\CBDepartList.cs" />
+    <Compile Include="Com\Huen\DataModel\CBDutyList.cs" />
+    <Compile Include="Com\Huen\DataModel\CDRData.cs" />
+    <Compile Include="Com\Huen\DataModel\CDRProperty.cs" />
+    <Compile Include="Com\Huen\DataModel\ChildInfo.cs" />
+    <Compile Include="Com\Huen\DataModel\AlarmBirth.cs" />
+    <Compile Include="Com\Huen\DataModel\AlarmAttention.cs" />
+    <Compile Include="Com\Huen\DataModel\AppProperty0.cs" />
+    <Compile Include="Com\Huen\DataModel\CallingRateInternational.cs" />
+    <Compile Include="Com\Huen\DataModel\CallingRateInterRegion.cs" />
+    <Compile Include="Com\Huen\DataModel\CallingRateException.cs" />
+    <Compile Include="Com\Huen\DataModel\DOMESTICRATE.cs" />
+    <Compile Include="Com\Huen\DataModel\EventSchedule.cs" />
+    <Compile Include="Com\Huen\DataModel\Firm.cs" />
+    <Compile Include="Com\Huen\DataModel\ActLog.cs" />
+    <Compile Include="Com\Huen\DataModel\FloorR.cs" />
+    <Compile Include="Com\Huen\DataModel\Floor.cs" />
+    <Compile Include="Com\Huen\DataModel\Graduate.cs" />
+    <Compile Include="Com\Huen\DataModel\HotelClasses.cs" />
+    <Compile Include="Com\Huen\DataModel\INTERNATIONAL.cs" />
+    <Compile Include="Com\Huen\DataModel\INTERNATIONALRATE.cs" />
+    <Compile Include="Com\Huen\DataModel\Languages.cs" />
+    <Compile Include="Com\Huen\DataModel\MonthFee.cs" />
+    <Compile Include="Com\Huen\DataModel\Parent.cs" />
+    <Compile Include="Com\Huen\DataModel\PrintLayout.cs" />
+    <Compile Include="Com\Huen\DataModel\RcvData.cs" />
+    <Compile Include="Com\Huen\DataModel\RecInfos.cs" />
+    <Compile Include="Com\Huen\DataModel\Sex.cs" />
+    <Compile Include="Com\Huen\DataModel\Customers.cs" />
+    <Compile Include="Com\Huen\DataModel\FamilyRole.cs" />
+    <Compile Include="Com\Huen\DataModel\GroupList.cs" />
+    <Compile Include="Com\Huen\DataModel\Customer.cs" />
+    <Compile Include="Com\Huen\DataModel\DepartmentViewModel.cs" />
+    <Compile Include="Com\Huen\DataModel\DepartmentTreeViewModel.cs" />
+    <Compile Include="Com\Huen\DataModel\Department.cs" />
+    <Compile Include="Com\Huen\DataModel\CustGroup.cs" />
+    <Compile Include="Com\Huen\DataModel\CustGroupTreeViewModel.cs" />
+    <Compile Include="Com\Huen\DataModel\CustGroupViewModel.cs" />
+    <Compile Include="Com\Huen\DataModel\Employee.cs" />
+    <Compile Include="Com\Huen\DataModel\LGuMessage.cs" />
+    <Compile Include="Com\Huen\Controldata\Statistics.cs" />
+    <Compile Include="Com\Huen\Converter\CallforToImage.cs" />
+    <Compile Include="Com\Huen\Converter\DayByMonth.cs" />
+    <Compile Include="Com\Huen\CustomControl1.cs" />
+    <Compile Include="Com\Huen\Controldata\CallListData.cs" />
+    <Compile Include="Com\Huen\Controldata\CallList.cs" />
+    <Compile Include="Com\Huen\DataModel\AppProperty.cs" />
+    <Compile Include="Com\Huen\DataModel\LoginProperty.cs" />
+    <Compile Include="Com\Huen\DataModel\Sms.cs" />
+    <Compile Include="Com\Huen\DataModel\SMSPeer.cs" />
+    <Compile Include="Com\Huen\DataModel\Student.cs" />
+    <Compile Include="Com\Huen\DataModel\CallingRate.cs" />
+    <Compile Include="Com\Huen\DataModel\User.cs" />
+    <Compile Include="Com\Huen\DataModel\UserInfo.cs" />
+    <Compile Include="Com\Huen\Data\EmployeeList.cs" />
+    <Compile Include="Com\Huen\Libs\CustGroupComparer.cs" />
+    <Compile Include="Com\Huen\Libs\DepartComparer.cs" />
+    <Compile Include="Com\Huen\Libs\Ini.cs" />
+    <Compile Include="Com\Huen\Libs\IsExtensionComparer.cs" />
+    <Compile Include="Com\Huen\Libs\CompareString.cs" />
+    <Compile Include="Com\Huen\Libs\util.cs" />
+    <Compile Include="Com\Huen\Sockets\AlchemyClientCS.cs" />
+    <Compile Include="Com\Huen\Sockets\HotelHelper.cs" />
+    <Compile Include="Com\Huen\Sockets\PMSServer.cs" />
+    <Compile Include="Com\Huen\Sockets\CDRecorder.cs" />
+    <Compile Include="Com\Huen\Sockets\HUDPClient.cs" />
+    <Compile Include="Com\Huen\Sockets\RTPRecorder.cs" />
+    <Compile Include="Com\Huen\Sockets\STRUCTS.cs" />
+    <Compile Include="Com\Huen\Sockets\TossServer.cs" />
+    <Compile Include="Com\Huen\Sql\ExcelHelper.cs" />
+    <Compile Include="Com\Huen\Sql\FirebirdDBHelper.cs" />
+    <Compile Include="Com\Huen\Libs\DllResources.cs" />
+    <Compile Include="Com\Huen\Sockets\SocketStruct.cs" />
+    <Compile Include="Com\Huen\UserControls\OutlinedTextBlock.cs" />
+    <Compile Include="Com\Huen\UserControls\TXT_ROOM2.xaml.cs">
+      <DependentUpon>TXT_ROOM2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Com\Huen\UserControls\TXT_ROOM.xaml.cs">
+      <DependentUpon>TXT_ROOM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Com\Huen\UserControls\ICO_ROOM.xaml.cs">
+      <DependentUpon>ICO_ROOM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Com\Huen\UserControls\OutlinedText.cs" />
+    <Compile Include="Com\Huen\UserControls\UCArrow.xaml.cs">
+      <DependentUpon>UCArrow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddPrefix.xaml.cs">
+      <DependentUpon>AddPrefix.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddPrefixException.xaml.cs">
+      <DependentUpon>AddPrefixException.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddPrefixInternational.xaml.cs">
+      <DependentUpon>AddPrefixInternational.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddPrefixInterRegion.xaml.cs">
+      <DependentUpon>AddPrefixInterRegion.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CdrAgent.xaml.cs">
+      <DependentUpon>CdrAgent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Com\Huen\Libs\ApplicationEnums.cs" />
+    <Compile Include="Views\BILL.xaml.cs">
+      <DependentUpon>BILL.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PMS.xaml.cs">
+      <DependentUpon>PMS.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Com\Huen\UserControls\TXT_ROOM2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Com\Huen\UserControls\TXT_ROOM.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Com\Huen\UserControls\ICO_ROOM.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Com\Huen\UserControls\UCArrow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\CustomDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AddPrefix.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddPrefixException.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddPrefixInternational.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddPrefixInterRegion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CdrAgent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BILL.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PMS.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Com\Huen\Sql\MSDBHelper.cs" />
+    <Compile Include="Com\Huen\Sockets\UDPSocketClient.cs" />
+    <Compile Include="Com\Huen\Libs\ModifyRegistry.cs" />
+    <Compile Include="Com\Huen\Sql\OLEDBHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\folder_close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\folder_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\IDB_BANNER_001.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\incomming.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bg_standalone.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_01_disable.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_01_off.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_01_on.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_02_disable.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_02_off.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_02_on.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_05_disable.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_05_off.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\login_bt_05_on.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\outgoing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_checkin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_confirm_clean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_end_clean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_end_laundary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_req_clean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_req_laundary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\room_req_parcel.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

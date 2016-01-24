@@ -1,0 +1,30 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:ee="http://schemas.microsoft.com/expression/2010/effects"
+             xmlns:usercontrols="clr-namespace:Com.Huen.UserControls"
+             x:Class="Com.Huen.UserControls.TXT_ROOM2" 
+             mc:Ignorable="d"
+             d:DesignWidth="130" Height="130" Foreground="{x:Null}">
+    <UserControl.Effect>
+        <DropShadowEffect Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+    </UserControl.Effect>
+    <Grid>
+        <!--<Rectangle Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" RadiusY="8.167" RadiusX="8.167"></Rectangle>-->
+        <Image x:Name="room_checkout" Source="/HCSPHONELIBS;component/images/room_empty.png" />
+        <Image x:Name="room_checkin" Source="/HCSPHONELIBS;component/images/room_checkin.png" />
+        <Image x:Name="room_req_clean" Source="/HCSPHONELIBS;component/images/room_req_clean.png" />
+        <Image x:Name="room_end_clean" Source="/HCSPHONELIBS;component/images/room_end_clean.png" />
+        <Image x:Name="room_confirm_clean" Source="/HCSPHONELIBS;component/images/room_confirm_clean.png" />
+        <Image x:Name="room_req_laundary" Source="/HCSPHONELIBS;component/images/room_req_laundary.png" />
+        <Image x:Name="room_end_laundary" Source="/HCSPHONELIBS;component/images/room_end_laundary.png" />
+        <Image x:Name="room_req_parcel" Source="/HCSPHONELIBS;component/images/room_req_parcel.png" />
+        <TextBlock x:Name="room_morningcall" HorizontalAlignment="Left" TextWrapping="Wrap" Text="22:22" VerticalAlignment="Top" Foreground="#FFC7C0A2" Height="17" Width="41" FontSize="12" Margin="44,81,0,0" TextAlignment="Center"/>
+        <TextBlock x:Name="room_language" HorizontalAlignment="Left" TextWrapping="Wrap" Text="EN" VerticalAlignment="Top" Foreground="#FFC7C0A2" Height="17" Width="30" FontSize="12" Margin="84,81,0,0" TextAlignment="Right"/>
+        <TextBlock x:Name="room_num" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Height="39" Width="80" FontSize="30" Margin="41,86,0,0" TextAlignment="Center" Foreground="#FFC7C0A2"/>
+        <!--usercontrols:OutlinedText x:Name="txtroomnum" Text="1234" FontSize="30" Stroke="{x:Null}" StrokeThickness="1" Width="71" VerticalAlignment="Top" Fill="#FFC7C0A2" Margin="52,95,0,0" Height="7" Font="FrankRuehl" HorizontalAlignment="Left"/-->
+    </Grid>
+</UserControl>

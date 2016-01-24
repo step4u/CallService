@@ -1,0 +1,21 @@
+﻿<Window x:Class="Com.Huen.Views.AddPrefixInternational"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="국제 전화 요율 입력" Height="170" Width="228" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" Icon="/HCSPHONELIBS;component/icon.ico">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" Text="대역" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" Text="유선착신" VerticalAlignment="Top" Margin="10,43,0,0"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" Text="무선착신" VerticalAlignment="Top" Margin="10,77,0,0"/>
+        <TextBox x:Name="txtKind" HorizontalAlignment="Left" Height="20" TextWrapping="NoWrap" VerticalAlignment="Top" Width="35" Margin="81,8,0,0" TextChanged="txtInteger_TextChanged" TextAlignment="Center"/>
+        <TextBox x:Name="txtMRate" HorizontalAlignment="Left" Height="20" TextWrapping="NoWrap" VerticalAlignment="Top" Width="35" Margin="81,76,0,0" Text="50" TextAlignment="Right" TextChanged="txtDouble_TextChanged"/>
+        <TextBox x:Name="txtMSec" HorizontalAlignment="Left" Height="20" TextWrapping="NoWrap" VerticalAlignment="Top" Width="34" Margin="149,76,0,0" Text="60" TextAlignment="Right" TextChanged="txtInteger_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Top" Margin="119,78,0,0"><Run Language="ko-kr" Text="원 / "/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Top" Margin="185,78,0,0"><Run Language="ko-kr" Text="초"/></TextBlock>
+        <TextBox x:Name="txtLRate" HorizontalAlignment="Left" Height="20" TextWrapping="NoWrap" VerticalAlignment="Top" Width="35" Margin="81,41,0,0" Text="50" TextAlignment="Right" TextChanged="txtDouble_TextChanged"/>
+        <TextBox x:Name="txtLSec" HorizontalAlignment="Left" Height="20" TextWrapping="NoWrap" VerticalAlignment="Top" Width="34" Margin="149,41,0,0" Text="60" TextAlignment="Right" TextChanged="txtInteger_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Top" Margin="119,43,0,0"><Run Language="ko-kr" Text="원 / "/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Top" Margin="185,43,0,0"><Run Language="ko-kr" Text="초"/></TextBlock>
+        <Button x:Name="btnOk" Content="확인" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="57,111,0,0" RenderTransformOrigin="1.04,0.3" Click="btnOk_Click"/>
+        <Button x:Name="btnCancel" Content="취소" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="137,111,0,0" Click="btnCancel_Click"/>
+    </Grid>
+</Window>
