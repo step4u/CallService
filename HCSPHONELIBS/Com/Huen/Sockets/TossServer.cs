@@ -55,7 +55,11 @@ namespace Com.Huen.Sockets
             {
                 case "0001":
                     // Make up room
-                    r = new ResponseFromTossServer() { Type = CommandType.CleanReq, Data = c };
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomReq, Data = c };
+                    break;
+                case "0002":
+                    // Make up room cancel
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomCancel, Data = c };
                     break;
                 case "0003":
                     // DnD 요청
@@ -67,19 +71,19 @@ namespace Com.Huen.Sockets
                     break;
                 case "0005":
                     // 세탁 요청
-                    r = new ResponseFromTossServer() { Type = CommandType.CleanEnd, Data = c };
+                    r = new ResponseFromTossServer() { Type = CommandType.LaundaryReq, Data = c };
                     break;
                 case "0006":
                     // 세탁 취소
-                    r = new ResponseFromTossServer() { Type = CommandType.CleanConfirm, Data = c };
+                    r = new ResponseFromTossServer() { Type = CommandType.LaundaryCancel, Data = c };
                     break;
                 case "0007":
-                    // 방청소 요청
-                    r = new ResponseFromTossServer() { Type = CommandType.LaundaryReq, Data = c };
+                    // 방청소 확인
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomDone, Data = c };
                     break;
                 case "0008":
                     // 방청소 확인
-                    r = new ResponseFromTossServer() { Type = CommandType.LaundaryEnd, Data = c };
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomConfirm, Data = c };
                     break;
                 default:
                     switch (caller)
@@ -256,18 +260,20 @@ namespace Com.Huen.Sockets
         Message = 1,
         RegisterReq = 2,
         RegisterRes = 3,
-        CleanReq = 4,
-        CleanEnd = 5,
-        CleanConfirm = 6,
-        LaundaryReq = 7,
-        LaundaryEnd = 8,
-        ParcelExistReq = 9,
-        ParcelExistEnd = 10,
-        HeartBeatReq = 11,
-        HeartBeatRes = 12,
-        MorningCall = 13,
-        DnDReq = 14,
-        DnDCancel = 15,
+        MakeupRoomReq = 4,
+        MakeupRoomCancel = 5,
+        MakeupRoomDone = 6,
+        MakeupRoomConfirm = 7,
+        LaundaryReq = 8,
+        LaundaryCancel = 9,
+        LaundaryDone = 10,
+        ParcelExistReq = 11,
+        ParcelExistEnd = 12,
+        HeartBeatReq = 13,
+        HeartBeatRes = 14,
+        MorningCall = 15,
+        DnDReq = 16,
+        DnDCancel = 17,
         Error = 255
     }
 

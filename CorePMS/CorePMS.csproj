@@ -36,10 +36,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MahApps.Metro">
-      <HintPath>..\..\..\libraries\C#\MahApps\MahApps.Metro.dll</HintPath>
+      <HintPath>..\..\..\Libraries\C#\dll\MahApps.Metro.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro.Resources">
-      <HintPath>..\..\..\libraries\C#\MahApps\MahApps.Metro.Resources.dll</HintPath>
+      <HintPath>..\..\..\Libraries\C#\dll\MahApps.Metro.Resources.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

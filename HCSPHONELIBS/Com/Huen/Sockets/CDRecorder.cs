@@ -46,7 +46,7 @@ namespace Com.Huen.Sockets
         public CDRecorder(int port)
         {
             _localep = new IPEndPoint(IPAddress.Any, port);
-            _remoteep = new IPEndPoint(IPAddress.Any, 0);
+            //_remoteep = new IPEndPoint(IPAddress.Any, 0);
 
             try
             {
@@ -87,6 +87,7 @@ namespace Com.Huen.Sockets
 
             while (_IsCdrSrvStarted)
             {
+                _remoteep = new IPEndPoint(IPAddress.Any, 0);
                 byte[] _buffer = new byte[1024];
                 _count = 0;
 
@@ -109,21 +110,8 @@ namespace Com.Huen.Sockets
                 CdrList _cdrdata = util.GetObject<CdrList>(_cdr.data);
                 this.CdrToDB(_cdr, _cdrdata);
 
-                //if ((_cdrdata.callee == "0001"
-                //    || _cdrdata.callee == "0003"
-                //    || _cdrdata.callee == "0004"
-                //    || _cdrdata.callee == "0005"
-                //    || _cdrdata.callee == "0006"
-                //    || _cdrdata.callee == "0007"
-                //    || _cdrdata.callee == "0008")
-                //    && _cdrdata.result == 0)
-                //{
-                //    if (RequestCDREvent != null)
-                //        RequestCDREvent(this, _cdr.cmd, _cdrdata.caller, _cdrdata.callee, _cdrdata.result);
-                //}
-
-                //if (RequestCDREvent != null)
-                //    RequestCDREvent(this, _cdr.cmd, _cdrdata.caller, _cdrdata.callee, _cdrdata.result);
+                if (RequestCDREvent != null)
+                    RequestCDREvent(this, _cdr.cmd, _cdrdata.caller, _cdrdata.callee, _cdrdata.result);
             }
         }
 

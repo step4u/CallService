@@ -196,18 +196,21 @@ namespace Com.Huen.Views
                         break;
                 }
 
-                if (roomitm == null)
-                    return;
+                if (roomitm == null) return;
 
-                if (r.Type == Com.Huen.Sockets.CommandType.CleanReq)
+                if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomReq)
                 {
                     roomitm.States_Clean = "1";
                 }
-                else if (r.Type == Com.Huen.Sockets.CommandType.CleanEnd)
+                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomCancel)
                 {
                     roomitm.States_Clean = "2";
                 }
-                else if (r.Type == Com.Huen.Sockets.CommandType.CleanConfirm)
+                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomDone)
+                {
+                    roomitm.States_Clean = "2";
+                }
+                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomConfirm)
                 {
                     roomitm.States_Clean = "3";
                 }
@@ -215,7 +218,11 @@ namespace Com.Huen.Views
                 {
                     roomitm.States_Laundary = "1";
                 }
-                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryEnd)
+                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryCancel)
+                {
+                    roomitm.States_Laundary = "0";
+                }
+                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryDone)
                 {
                     roomitm.States_Laundary = "0";
                 }
