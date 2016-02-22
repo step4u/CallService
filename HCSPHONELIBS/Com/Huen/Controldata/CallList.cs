@@ -51,7 +51,7 @@ namespace Com.Huen.Controldata
             {
                 try
                 {
-                    db.strSql = sb.ToString();
+                    db.Sql = sb.ToString();
                     dt = db.GetDataTable();
                 }
                 catch (System.Data.SqlClient.SqlException e)
@@ -109,7 +109,7 @@ namespace Com.Huen.Controldata
             {
                 try
                 {
-                    db.strSql = sb.ToString();
+                    db.Sql = sb.ToString();
 
                     db.BeginTran();
                     chk = db.GetEffectedCount();

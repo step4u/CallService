@@ -1,110 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using System.Data;
 using System.Data.SqlClient;
-
-using Com.Huen.Libs;
 
 namespace Com.Huen.Sql
 {
     public class MSDBHelper : IDisposable
     {
-        SqlConnection conn = null;
-        SqlCommand cmd = null;
-        SqlDataAdapter adapter = null;
+        private SqlConnection conn = null;
+        private SqlCommand cmd = null;
+        private SqlDataAdapter adapter = null;
 
-        DataSet ds = null;
-        DataTable dt = null;
+        private DataSet ds = null;
+        private DataTable dt = null;
 
-        object objResult = null;
-        int iResult = 0;
+        private object objResult = null;
+        private int iResult = 0;
 
         #region 속성
-        private string _strSql = string.Empty;
-        public string strSql
+        private string strSql = string.Empty;
+        private string strConn = string.Empty;
+        private CommandType commandType = CommandType.Text;
+
+        public string Sql
         {
             get
             {
-                return _strSql;
+                return strSql;
             }
             set
             {
-                _strSql = value;
-                //cmd.CommandText = _strSql;
+                strSql = value;
             }
         }
 
-        private string _strConn = string.Empty;
-        public string strConn
+        
+        public string Conn
         {
             get
             {
-                return _strConn;
+                return strConn;
             }
             set
             {
-                _strConn = value;
+                strConn = value;
             }
         }
 
-        private CommandType _commandType = CommandType.Text;
-        public CommandType CmdType
+        public CommandType CommandType
         {
             get
             {
-                return _commandType;
+                return commandType;
             }
             set
             {
-                _commandType = value;
-                //cmd.CommandType = _commandType;
+                commandType = value;
             }
         }
         #endregion 속성
 
         public MSDBHelper() { }
 
-        public MSDBHelper(string strconn)
+        public MSDBHelper(string conn) : this(string.Empty, conn, CommandType.Text) { }
+
+        public MSDBHelper(string sql, string conn) : this(sql, conn, CommandType.Text) { }
+
+        public MSDBHelper(string sql, string conn, CommandType cmdtype)
         {
-            this.strConn = strconn;
+            Sql = sql;
+            Conn = conn;
+            CommandType = cmdtype;
 
-            conn = new SqlConnection(strConn);
-            conn.Open();
-
-            cmd = new SqlCommand();
-            cmd.Connection = conn;
+            this.Initiate();
         }
 
-        public MSDBHelper(string __sql, string strconn)
+        private void Initiate()
         {
-            strSql = __sql;
-            strConn = strconn;
-
-            conn = new SqlConnection(strConn);
-            conn.Open();
-
             cmd = new SqlCommand();
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandText = strSql;
-            cmd.Connection = conn;
+            cmd.CommandType = CommandType;
+            cmd.CommandText = Sql;
+            cmd.Connection = new SqlConnection(Conn);
         }
 
-        public MSDBHelper(string str, string strconn, CommandType cmdtype)
+        public void Open()
         {
-            strSql = str;
-            strConn = strconn;
-            CmdType = cmdtype;
-
-            conn = new SqlConnection(strConn);
             conn.Open();
-
-            cmd = new SqlCommand();
-            cmd.CommandType = CmdType;
-            cmd.CommandText = strSql;
-            cmd.Connection = conn;
         }
 
         public DataSet GetDataSet()
@@ -198,26 +179,6 @@ namespace Com.Huen.Sql
             iResult = 0;
         }
 
-        // 프로시저 실행 결과 리턴 (0:실패, 1:성공), 트랜잭션은 프로시저에서 처리
-        //protected int ExcuteSP(string procname, DataTable variables)
-        //{
-        //    foreach (DataRow dr in variables.Rows)
-        //    {
-        //        SqlParameter sqlParam = new SqlParameter(dr[0].ToString(), dr[3].ToString());
-        //        if (dr[4].ToString() == "ReturnValue")
-        //        {
-        //            sqlParam.Direction = ParameterDirection.ReturnValue;
-        //        }
-        //        cmd.Parameters.Add(sqlParam);
-        //    }
-
-        //    cmd.ExecuteNonQuery();
-
-        //    int chk = (int)cmd.Parameters["@CHK"].Value;
-
-        //    return chk;
-        //}
-
         public void ExcuteSP(string procname, DataTable variables)
         {
             cmd.CommandType = CommandType.StoredProcedure;
@@ -280,38 +241,5 @@ namespace Com.Huen.Sql
 
             return this.GetData();
         }
-
-        //// 프로시저 실행을 위한 값 셋팅 테이블
-        //protected DataTable MakeDataTable2Proc()
-        //{
-        //    DataTable dt = new DataTable();
-
-        //    DataColumn paramname = new DataColumn();
-        //    paramname.DataType = System.Type.GetType("System.String");
-        //    paramname.ColumnName = "DataName";
-        //    dt.Columns.Add(paramname);
-
-        //    DataColumn datatype = new DataColumn();
-        //    datatype.DataType = System.Type.GetType("System.Object");
-        //    datatype.ColumnName = "DataType";
-        //    dt.Columns.Add(datatype);
-
-        //    DataColumn datasize = new DataColumn();
-        //    datasize.DataType = System.Type.GetType("System.Int32");
-        //    datasize.ColumnName = "DataSize";
-        //    dt.Columns.Add(datasize);
-
-        //    DataColumn datavalue = new DataColumn();
-        //    datavalue.DataType = System.Type.GetType("System.String");
-        //    datavalue.ColumnName = "DataValue";
-        //    dt.Columns.Add(datavalue);
-
-        //    DataColumn datadirection = new DataColumn();
-        //    datadirection.DataType = System.Type.GetType("System.String");
-        //    datadirection.ColumnName = "DataDirection";
-        //    dt.Columns.Add(datadirection);
-
-        //    return dt;
-        //}
     }
 }

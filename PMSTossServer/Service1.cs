@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
+﻿using Com.Huen.Sockets;
 using System.ServiceProcess;
-using System.Text;
 
 namespace PMSTossServer
 {
     public partial class Service1 : ServiceBase
     {
+        private TossServer ws;
+
         public Service1()
         {
             InitializeComponent();
@@ -18,10 +14,15 @@ namespace PMSTossServer
 
         protected override void OnStart(string[] args)
         {
+            ws = new TossServer();
         }
 
         protected override void OnStop()
         {
+            if (ws != null)
+            {
+                ws.Dispose();
+            }
         }
     }
 }

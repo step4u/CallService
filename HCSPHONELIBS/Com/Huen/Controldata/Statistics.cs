@@ -69,8 +69,8 @@ namespace Com.Huen.Controldata
                 {
                     try
                     {
-                        db.CmdType = CommandType.Text;
-                        db.strSql = " select year(regdate) as yyyy, ltrim(str(year(regdate))+'년') as yy from ipcc_call_list group by year(regdate) order by year(regdate) desc ";
+                        db.CommandType = CommandType.Text;
+                        db.Sql = " select year(regdate) as yyyy, ltrim(str(year(regdate))+'년') as yy from ipcc_call_list group by year(regdate) order by year(regdate) desc ";
                         dt = db.GetDataTable();
                     }
                     catch (System.Data.SqlClient.SqlException e)
@@ -167,8 +167,8 @@ namespace Com.Huen.Controldata
                 {
                     try
                     {
-                        db.CmdType = CommandType.Text;
-                        db.strSql = " select calleenum from ipcc_call_list group by calleenum ";
+                        db.CommandType = CommandType.Text;
+                        db.Sql = " select calleenum from ipcc_call_list group by calleenum ";
                         dt = db.GetDataTable();
                     }
                     catch (System.Data.SqlClient.SqlException e)
@@ -235,8 +235,8 @@ namespace Com.Huen.Controldata
             {
                 try
                 {
-                    db.CmdType = CommandType.Text;
-                    db.strSql = sb.ToString();
+                    db.CommandType = CommandType.Text;
+                    db.Sql = sb.ToString();
                     data = db.GetDataTable();
                 }
                 catch (System.Data.SqlClient.SqlException e)
@@ -303,8 +303,8 @@ namespace Com.Huen.Controldata
             {
                 try
                 {
-                    db.CmdType = CommandType.Text;
-                    db.strSql = sb.ToString();
+                    db.CommandType = CommandType.Text;
+                    db.Sql = sb.ToString();
                     data = db.GetDataTable();
                 }
                 catch (System.Data.SqlClient.SqlException e)

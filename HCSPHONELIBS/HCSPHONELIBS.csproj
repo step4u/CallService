@@ -207,6 +207,7 @@
     <Compile Include="Com\Huen\Sockets\PMSServer.cs" />
     <Compile Include="Com\Huen\Sockets\CDRecorder.cs" />
     <Compile Include="Com\Huen\Sockets\HUDPClient.cs" />
+    <Compile Include="Com\Huen\Sockets\RelayService.cs" />
     <Compile Include="Com\Huen\Sockets\RTPRecorder.cs" />
     <Compile Include="Com\Huen\Sockets\STRUCTS.cs" />
     <Compile Include="Com\Huen\Sockets\TossServer.cs" />

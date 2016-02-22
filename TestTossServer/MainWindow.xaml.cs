@@ -11,6 +11,7 @@ namespace TestTossServer
     public partial class MainWindow : Window
     {
         TossServer ws;
+        RelayService relayserver;
 
         public MainWindow()
         {
@@ -20,6 +21,8 @@ namespace TestTossServer
 
             ws = new TossServer();
             this.WindowState = WindowState.Minimized;
+
+            relayserver = new RelayService();
         }
 
         void MainWindow_Closed(object sender, EventArgs e)
