@@ -19,6 +19,7 @@ namespace TestTossServer
             this.Closed += MainWindow_Closed;
 
             ws = new TossServer();
+            this.WindowState = WindowState.Minimized;
         }
 
         void MainWindow_Closed(object sender, EventArgs e)

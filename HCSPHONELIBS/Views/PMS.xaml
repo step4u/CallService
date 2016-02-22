@@ -6,7 +6,7 @@
         xmlns:con="clr-namespace:Com.Huen.UserControls"
         xmlns:converter="clr-namespace:Com.Huen.Converter"
         xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid" x:Class="Com.Huen.Views.PMS"
-        Title="PMS - Huen Communication" Height="600" Width="800"
+        Title="PMS - Coretree" Height="600" Width="800"
         GlowBrush="{DynamicResource AccentColorBrush}"
         NonActiveGlowBrush="Red" ResizeMode="CanResizeWithGrip">
 
@@ -371,7 +371,7 @@
                                 <MenuItem x:Name="contextmenu0" Header="체크인 (_I)" Click="contextmenu0_Click"/>
                                 <MenuItem x:Name="contextmenu1" Header="수정 (_M)" Click="contextmenu1_Click"/>
                                 <!--MenuItem x:Name="contextmenu2" Header="방변경 (_C)" Click="contextmenu2_Click"/-->
-                                <MenuItem x:Name="contextmenu3" Header="빌링 (_B)" Click="contextmenu3_Click"/>
+                                <!--<MenuItem x:Name="contextmenu3" Header="빌링 (_B)" Click="contextmenu3_Click"/>-->
                                 <MenuItem x:Name="contextmenu4" Header="체크아웃 (_O)" Click="contextmenu4_Click" />
                                 <Separator/>
                                 <MenuItem x:Name="contextmenu6" Header="청소">

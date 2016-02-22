@@ -12,6 +12,7 @@ using Alchemy;
 using Alchemy.Classes;
 using Newtonsoft.Json;
 using Com.Huen.Views;
+using System.Diagnostics;
 
 namespace Com.Huen.Sockets
 {
@@ -51,15 +52,17 @@ namespace Com.Huen.Sockets
 
             ResponseFromTossServer r = null;
 
+            Debug.WriteLine("ToossServer callee: " + callee);
+
             switch (callee)
             {
                 case "0001":
-                    // Make up room
+                    // Make up room request
                     r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomReq, Data = c };
                     break;
                 case "0002":
-                    // Make up room cancel
-                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomCancel, Data = c };
+                    // Make up room done
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomDone, Data = c };
                     break;
                 case "0003":
                     // DnD 요청
@@ -78,8 +81,8 @@ namespace Com.Huen.Sockets
                     r = new ResponseFromTossServer() { Type = CommandType.LaundaryCancel, Data = c };
                     break;
                 case "0007":
-                    // 방청소 확인
-                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomDone, Data = c };
+                    // make up room confirm
+                    r = new ResponseFromTossServer() { Type = CommandType.MakeupRoomConfirm, Data = c };
                     break;
                 case "0008":
                     // 방청소 확인

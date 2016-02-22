@@ -18,6 +18,7 @@ using Com.Huen.DataModel;
 using Com.Huen.Sockets;
 using Alchemy.Classes;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace Com.Huen.Views
 {
@@ -97,6 +98,8 @@ namespace Com.Huen.Views
             _pms_data_type pmsdata;
             Clean c = null;
 
+            Debug.WriteLine(" >>> PMS r.Type: " + r.Type.ToString());
+
             RoomItem roomitm = null;
 
             switch (r.Type)
@@ -121,8 +124,6 @@ namespace Com.Huen.Views
                                     {
                                         room.Hour = pmsdata.hour;
                                         room.Minutes = pmsdata.minutes;
-
-                                        //MessageBox.Show(room.Hour.ToString() + " // " + room.Minutes.ToString());
                                         break;
                                     }
                                 }
@@ -143,11 +144,13 @@ namespace Com.Huen.Views
                             break;
                     }
                     break;
-                case Com.Huen.Sockets.CommandType.CleanReq:
-                case Com.Huen.Sockets.CommandType.CleanEnd:
-                case Com.Huen.Sockets.CommandType.CleanConfirm:
+                case Com.Huen.Sockets.CommandType.MakeupRoomReq:
+                case Com.Huen.Sockets.CommandType.MakeupRoomCancel:
+                case Com.Huen.Sockets.CommandType.MakeupRoomDone:
+                case Com.Huen.Sockets.CommandType.MakeupRoomConfirm:
                 case Com.Huen.Sockets.CommandType.LaundaryReq:
-                case Com.Huen.Sockets.CommandType.LaundaryEnd:
+                case Com.Huen.Sockets.CommandType.LaundaryCancel:
+                case Com.Huen.Sockets.CommandType.LaundaryDone:
                 case Com.Huen.Sockets.CommandType.ParcelExistEnd:
                 case Com.Huen.Sockets.CommandType.DnDReq:
                 case Com.Huen.Sockets.CommandType.DnDCancel:
@@ -204,7 +207,7 @@ namespace Com.Huen.Views
                 }
                 else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomCancel)
                 {
-                    roomitm.States_Clean = "2";
+                    roomitm.States_Clean = "0";
                 }
                 else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomDone)
                 {
@@ -812,7 +815,7 @@ namespace Com.Huen.Views
             {
                 var pmsdata = item.PMSDATA;
                 pmsdata.cmd = STRUCTS.PMS_SET_ALL_REQ;
-                pmsdata.repeat_times = 3;
+                pmsdata.repeat_times = 5;
                 pmsdata.ring_duration = 120;
                 pmsdata.try_interval = 3;
 
