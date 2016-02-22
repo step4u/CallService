@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTossServer", "TestTossS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCSPHONELIBS", "HCSPHONELIBS\HCSPHONELIBS.csproj", "{32BBA895-47EA-416C-98E1-9F6680F5AAF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplayServer", "ReplayServer\ReplayServer.csproj", "{5FBEFD77-B1BF-4887-87DD-7A19A6A29BA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplayService", "ReplayServer\ReplayService.csproj", "{5FBEFD77-B1BF-4887-87DD-7A19A6A29BA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
