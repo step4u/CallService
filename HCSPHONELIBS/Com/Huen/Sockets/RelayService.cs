@@ -38,7 +38,7 @@ namespace Com.Huen.Sockets
             set {
                 if (string.IsNullOrEmpty(value))
                 {
-                    pbxip = "127.0.0.1";
+                    pbxip = "14.63.171.190";
                 }
                 else
                 {
