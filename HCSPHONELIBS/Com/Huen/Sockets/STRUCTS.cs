@@ -39,13 +39,18 @@ namespace Com.Huen.Sockets
         public const int PMS_CLEAR_FUNCTION_KEY_REQ = 731;
         public const int PMS_CLEAR_FUNCTION_KEY_RES = 732;
 
+        public const int PMS_SET_CHECKOUT_TIME_REQ = 733;
+        public const int PMS_SET_CHECKOUT_TIME_RES = 734;
+
+        public const int PMS_REPORT_FUNCTION_KEY = 741;
+
         public const byte EXT_MAX_SIZE = 4;
         public const byte EXT_ALLOW_CHAR_WIDTH = 29;
 
         public const int ERR_SOCKET_TIMEOUT = 1001;
     }
 
-    [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi, Size = 120)]
+    [StructLayoutAttribute(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi, Size = 164)]
     public struct _pms_data_type
     {
         public int cmd;
@@ -75,5 +80,20 @@ namespace Com.Huen.Sockets
 
         // 우편물 관리 설정 부분
         public int post_parcel;
+
+        // check out 예정 알람 부분
+        public int checkout_month;
+        public int checkout_day;
+        public int checkout_hour;
+        public int checkout_minitues;
+        public int checkout_before_min;
+        public int checkout_try_interval;
+        public int checkout_repeat_times;
+        public int checkout_ring_duration;
+
+        // 호텔 function-key 부분
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = STRUCTS.EXT_MAX_SIZE + 4)]
+        public string function_key;
+        public int function_key_cmd;
     }
 }

@@ -81,18 +81,16 @@ namespace Com.Huen.Sockets
 
         private void CheckRoonetsDB()
         {
-            DataSet ds = null;
-            StringBuilder sb = new StringBuilder();
-            sb.Append("select T1_ID, T1_CODE, T1_PERIOD, T1_PROOM from INF_CT01 where where T1_READ=0;");
-            sb.Append("select T1_ID, T1_TXT2 from INF_CT01 where where T1_READ2=0;");
+            DataTable dt = null;
 
+            // Check House Check IN/OUT
             using (MSDBHelper db = new MSDBHelper(DBServer))
             {
                 try
                 {
                     db.Open();
-                    db.Sql = sb.ToString();
-                    ds = db.GetDataSet();
+                    db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM from INF_CT01 where T1_READ=0;";
+                    dt = db.GetDataTable();
                 }
                 catch (SqlException e)
                 {
@@ -102,32 +100,203 @@ namespace Com.Huen.Sockets
 
             try
             {
-                foreach (DataRow row in ds.Tables[0].AsEnumerable())
+                foreach (DataRow row in dt.AsEnumerable())
                 {
-
-                    switch (row[1].ToString())
+                    _pms_data_type original_data = new _pms_data_type();
+                    using (HotelHelper hh = new HotelHelper())
                     {
-                        case "0":
-                            break;
-                        case "1":
-                            break;
-                        case "2":
-                            break;
-                        case "3":
-                            break;
-                        case "4":
-                            break;
-                        case "5":
-                            break;
+                        original_data = hh.GetPolicy(row[2].ToString());
+                    }
+
+                    bool result = false;
+                    int count = 0;
+
+                    using (HotelHelper hh = new HotelHelper())
+                    {
+                        result = hh.SetSystem(row[3].ToString(), row[2].ToString(), row[4].ToString(), string.Empty);
+                    }
+
+                    if (!result) continue;
+
+                    using (MSDBHelper db = new MSDBHelper(DBServer))
+                    {
+                        try
+                        {
+                            db.Open();
+                            db.BeginTran();
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_ID={0}", row[0].ToString());
+                            count = db.GetEffectedCount();
+                            db.Commit();
+                        }
+                        catch (SqlException e)
+                        {
+                            db.Rollback();
+                            using (HotelHelper hh = new HotelHelper())
+                            {
+                                result = hh.RestoreSystem(original_data);
+                            }
+                            continue;
+                        }
                     }
 
                     using (MSDBHelper db = new MSDBHelper(DBServer))
                     {
-                        db.Open();
-                        db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_ID={0}", row[0].ToString());
+                        try
+                        {
+                            db.Open();
+                            db.Sql = string.Format("select T1_ID, T1_SITE, T1_ROOM, T1_TXT2 from INF_CT01 where T1_READ2=0 and T1_ID={0};", row[0].ToString());
+                            dt = db.GetDataTable();
+                        }
+                        catch (SqlException e)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (dt.Rows.Count < 1) continue;
+
+                    using (HotelHelper hh = new HotelHelper())
+                    {
+                        original_data = hh.GetPolicy(row[2].ToString());
+                        result = hh.SetSystem(string.Empty, row[2].ToString(), string.Empty, dt.Rows[0][3].ToString());
+                    }
+
+                    if (!result) continue;
+
+                    using (MSDBHelper db = new MSDBHelper(DBServer))
+                    {
+                        try
+                        {
+                            db.Open();
+                            db.BeginTran();
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_READ2=0 and T1_ID={0}", row[0].ToString());
+                            count = db.GetEffectedCount();
+                            db.Commit();
+                        }
+                        catch (SqlException e)
+                        {
+                            db.Rollback();
+                            using (HotelHelper hh = new HotelHelper())
+                            {
+                                result = hh.RestoreSystem(original_data);
+                            }
+                            continue;
+                        }
                     }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
+            {
+                util.WriteLog(e.Message);
+            }
+
+
+
+            // Check House Keeping
+            dt = null;
+            using (MSDBHelper db = new MSDBHelper(DBServer))
+            {
+                try
+                {
+                    db.Open();
+                    // db.Sql = "select T2_ID, left(T2_ROOM, 5) as T2_SITE, substring(T2_ROOM, 6, len(T2_ROOM)-5) as T2_ROOM from INF_CT02 where T1_READ=0;";
+                    db.Sql = "select T3_ID, T3_SITE, T3_ROOM, T3_CODE, T3_READ, T3_TXT1 from INF_CT03 where T3_READ=0;";
+                    dt = db.GetDataTable();
+                }
+                catch (SqlException e)
+                {
+                    util.WriteLog(e.Message);
+                }
+            }
+
+            try
+            {
+                foreach (DataRow row in dt.AsEnumerable())
+                {
+                    _pms_data_type original_data = new _pms_data_type();
+                    using (HotelHelper hh = new HotelHelper())
+                    {
+                        original_data = hh.GetPolicy(row[2].ToString());
+                    }
+
+                    bool result = false;
+                    int count = 0;
+
+                    using (HotelHelper hh = new HotelHelper())
+                    {
+                        result = hh.SetSystem(row[3].ToString(), row[2].ToString(), row[4].ToString(), string.Empty);
+                    }
+
+                    if (!result) continue;
+
+                    using (MSDBHelper db = new MSDBHelper(DBServer))
+                    {
+                        try
+                        {
+                            db.Open();
+                            db.BeginTran();
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_ID={0}", row[0].ToString());
+                            count = db.GetEffectedCount();
+                            db.Commit();
+                        }
+                        catch (SqlException e)
+                        {
+                            db.Rollback();
+                            using (HotelHelper hh = new HotelHelper())
+                            {
+                                result = hh.RestoreSystem(original_data);
+                            }
+                            continue;
+                        }
+                    }
+
+                    using (MSDBHelper db = new MSDBHelper(DBServer))
+                    {
+                        try
+                        {
+                            db.Open();
+                            db.Sql = string.Format("select T1_ID, T1_SITE, T1_ROOM, T1_TXT2 from INF_CT01 where T1_READ2=0 and T1_ID={0};", row[0].ToString());
+                            dt = db.GetDataTable();
+                        }
+                        catch (SqlException e)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (dt.Rows.Count < 1) continue;
+
+                    using (HotelHelper hh = new HotelHelper())
+                    {
+                        original_data = hh.GetPolicy(row[2].ToString());
+                        result = hh.SetSystem(string.Empty, row[2].ToString(), string.Empty, dt.Rows[0][3].ToString());
+                    }
+
+                    if (!result) continue;
+
+                    using (MSDBHelper db = new MSDBHelper(DBServer))
+                    {
+                        try
+                        {
+                            db.Open();
+                            db.BeginTran();
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_READ2=0 and T1_ID={0}", row[0].ToString());
+                            count = db.GetEffectedCount();
+                            db.Commit();
+                        }
+                        catch (SqlException e)
+                        {
+                            db.Rollback();
+                            using (HotelHelper hh = new HotelHelper())
+                            {
+                                result = hh.RestoreSystem(original_data);
+                            }
+                            continue;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
             {
                 util.WriteLog(e.Message);
             }

@@ -118,7 +118,7 @@ namespace Com.Huen.Sockets
 
                 pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
             }
-            catch (SocketException sockex)
+            catch (SocketException e)
             {
                 pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_RES, status = 1, extension = _ext, hour = -1, minutes = -1, try_interval = 0, repeat_times = 0, repeat_week = 0, ring_duration = 0, week = string.Empty };
             }
@@ -201,13 +201,6 @@ namespace Com.Huen.Sockets
             UdpClient _client = new UdpClient();
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
-
-            //_cgi_extension_req cgi_ext_req = new _cgi_extension_req()
-            //{
-            //    cmd = SocketStruct.PMS_CLEAR_MORNING_CALL_REQ
-            //    ,
-            //    Ext = _ext
-            //};
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
@@ -458,6 +451,7 @@ namespace Com.Huen.Sockets
         }
         // 체크인 end
 
+        // 체크아웃
         public bool CheckOut(string _ext)
         {
             IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
@@ -465,19 +459,6 @@ namespace Com.Huen.Sockets
             UdpClient _client = new UdpClient();
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
-
-            //_pms_data_type pms_data_type = new _pms_data_type()
-            //{
-            //    cmd = STRUCTS.PMS_SET_ALL_REQ,
-            //    extension = _ext,
-            //    allowedPrefix = "",
-            //    forbiddenPrefix = "all",
-            //    language = 2,
-            //    hour = -1,
-            //    minutes = -1,
-            //    repeat_times = 5,
-            //    ring_duration = 180,
-            //};
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
@@ -590,6 +571,283 @@ namespace Com.Huen.Sockets
         public void Dispose()
         {
 
+        }
+
+        // for All Operations
+        public bool SetSystem(string code, string ext, string period, string language)
+        {
+            bool result = false;
+
+            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
+            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
+            UdpClient _client = new UdpClient();
+            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
+            _client.Connect(_serverEP);
+
+            _pms_data_type pms_sdata = this.GetPolicies(code, ext, period, language);
+            _pms_data_type pms_rdata = new _pms_data_type();
+
+            byte[] _sbuffer = util.GetBytes(pms_sdata);
+            byte[] _rbuffer = null;
+
+            try
+            {
+                _client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = _client.Receive(ref _remoteEP);
+
+                pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
+
+                if (pms_rdata.status == 0)
+                {
+                    result = true;
+                }
+            }
+            catch (SocketException sockex)
+            {
+                util.WriteLog(sockex.Message);
+                // pms_rdata = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
+                result = false;
+            }
+            _client.Close();
+
+            return result;
+        }
+
+        // for House Keep
+        public bool SetHouseKeep(string code, string ext, string mtime)
+        {
+            bool result = false;
+
+            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
+            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
+            UdpClient _client = new UdpClient();
+            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
+            _client.Connect(_serverEP);
+
+            _pms_data_type pms_sdata = this.GetPolicies4HouseKeep(code, ext, mtime);
+            _pms_data_type pms_rdata = new _pms_data_type();
+
+            byte[] _sbuffer = util.GetBytes(pms_sdata);
+            byte[] _rbuffer = null;
+
+            try
+            {
+                _client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = _client.Receive(ref _remoteEP);
+
+                pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
+
+                if (pms_rdata.status == 0)
+                {
+                    result = true;
+                }
+            }
+            catch (SocketException sockex)
+            {
+                util.WriteLog(sockex.Message);
+                // pms_rdata = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
+                result = false;
+            }
+            _client.Close();
+
+            return result;
+        }
+
+        public bool RestoreSystem(_pms_data_type data)
+        {
+            bool result = false;
+            _pms_data_type rdata = new _pms_data_type();
+
+            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
+            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
+            UdpClient _client = new UdpClient();
+            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
+            _client.Connect(_serverEP);
+
+            data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+            byte[] _sbuffer = util.GetBytes(data);
+            byte[] _rbuffer = null;
+
+            try
+            {
+                _client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = _client.Receive(ref _remoteEP);
+
+                rdata = util.GetObject<_pms_data_type>(_rbuffer);
+            }
+            catch (SocketException sockex)
+            {
+                util.WriteLog(sockex.Message);
+                result = false;
+            }
+            _client.Close();
+
+            if (rdata.cmd == STRUCTS.PMS_SET_ALL_RES)
+            {
+                if (rdata.status == 0)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        protected _pms_data_type GetPolicies(string code, string ext, string period, string language)
+        {
+            _pms_data_type data = new _pms_data_type();
+            DateTime tmpdate;
+
+            switch (code)
+            {
+                case "0":
+                    // 퇴실
+                    data.cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_REQ;
+                    data.extension = ext;
+                    break;
+                case "1":
+                    // 대실
+                    tmpdate = DateTime.Now.AddHours(4);
+                    data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+                    data.extension = ext;
+                    data.checkout_month = tmpdate.Month;
+                    data.checkout_day = tmpdate.Day;
+                    data.checkout_hour = tmpdate.Hour;
+                    data.checkout_minitues = tmpdate.Minute;
+                    data.checkout_before_min = 30;
+                    data.checkout_try_interval = 10;
+                    data.checkout_repeat_times = 2;
+                    data.checkout_ring_duration = 30;
+                    break;
+                case "2":
+                    // 숙박
+                    tmpdate = DateTime.Now.AddDays(string.IsNullOrEmpty(period) == true ? 0 : int.Parse(period));
+                    data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+                    data.extension = ext;
+                    data.checkout_month = tmpdate.Month;
+                    data.checkout_day = tmpdate.Day;
+                    data.checkout_hour = 12;
+                    data.checkout_minitues = 0;
+                    data.checkout_before_min = 30;
+                    data.checkout_try_interval = 10;
+                    data.checkout_repeat_times = 2;
+                    data.checkout_ring_duration = 30;
+                    break;
+                case "5":
+                    // 투숙일 변경
+                    tmpdate = DateTime.Now.AddDays(string.IsNullOrEmpty(period) == true ? 0 : int.Parse(period));
+                    data.cmd = STRUCTS.PMS_SET_CHECKOUT_TIME_REQ;
+                    data.extension = ext;
+                    data.checkout_month = tmpdate.Month;
+                    data.checkout_day = tmpdate.Day;
+                    data.checkout_hour = 12;
+                    data.checkout_minitues = 0;
+                    data.checkout_before_min = 30;
+                    data.checkout_try_interval = 10;
+                    data.checkout_repeat_times = 2;
+                    data.checkout_ring_duration = 30;
+                    break;
+                default:
+                    if (!string.IsNullOrEmpty(language))
+                    {
+                        // 언어설정
+                        data.cmd = STRUCTS.PMS_SET_LANGUAGE_REQ;
+                        data.extension = ext;
+                        if (language.ToLower().Equals("kor"))
+                        {
+                            data.language = 2;
+                        }
+                        else if (language.ToLower().Equals("eng"))
+                        {
+                            data.language = 1;
+                        }
+                        else if (language.ToLower().Equals("chi"))
+                        {
+                            data.language = 5;
+                        }
+                        else if (language.ToLower().Equals("jap"))
+                        {
+                            data.language = 6;
+                        }
+                        else
+                        {
+                            data.language = 1;
+                        }
+                    }
+                    break;
+            }
+
+            return data;
+        }
+
+        protected _pms_data_type GetPolicies4HouseKeep(string code, string ext, string mtime)
+        {
+            _pms_data_type data = new _pms_data_type();
+ 
+            switch (code)
+            {
+                case "A":
+                    // 우편물 도착 알림
+                    data.cmd = STRUCTS.PMS_SET_POST_PARCEL_REQ;
+                    data.extension = ext;
+                    data.post_parcel = 1;
+                    break;
+                case "B":
+                    // 우편물 도착 알림 취소
+                    data.cmd = STRUCTS.PMS_SET_POST_PARCEL_REQ;
+                    data.extension = ext;
+                    data.post_parcel = 0;
+                    break;
+                case "C":
+                    // 모닝콜 설정
+                    data.cmd = STRUCTS.PMS_SET_MORNING_CALL_REQ;
+                    data.extension = ext;
+                    string hh = mtime.Substring(0, 2);
+                    string mm = mtime.Substring(2, 2);
+                    int hour = string.IsNullOrEmpty(hh) == true ? 0 : int.Parse(hh);
+                    int minutes = string.IsNullOrEmpty(mm) == true ? 0 : int.Parse(mm);
+                    break;
+                case "D":
+                    // 모닝콜 취소
+                    data.cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_REQ;
+                    data.extension = ext;
+                    break;
+                case "J":
+                    // DND 취소
+                    
+                    break;
+                default:
+                    break;
+            }
+
+            return data;
+        }
+
+        protected bool GetResult(_pms_data_type sdata, _pms_data_type rdata)
+        {
+            bool result = false;
+
+            if (sdata.cmd == STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES)
+            {
+                switch (sdata.status)
+                {
+                    case 0:
+                        result = true;
+                        break;
+                    case 1:
+                        result = false;
+                        break;
+                    default:
+                        result = false;
+                        break;
+                }
+            }
+            else
+            {
+                result = false;
+            }
+
+            return result;
         }
 
     }
