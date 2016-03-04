@@ -72,20 +72,29 @@ namespace Com.Huen.Sql
             Conn = conn;
             CommandType = cmdtype;
 
-            this.Initiate();
+            // this.Initiate();
         }
 
-        private void Initiate()
-        {
-            cmd = new SqlCommand();
-            cmd.CommandType = CommandType;
-            cmd.CommandText = Sql;
-            cmd.Connection = new SqlConnection(Conn);
-        }
+        //private void Initiate()
+        //{
+        //    conn = new SqlConnection(Conn);
+        //    conn.Open();
+
+        //    cmd = new SqlCommand();
+        //    cmd.CommandType = CommandType;
+        //    cmd.CommandText = Sql;
+        //    cmd.Connection = conn;
+        //}
 
         public void Open()
         {
+            conn = new SqlConnection(Conn);
             conn.Open();
+
+            cmd = new SqlCommand();
+            cmd.CommandType = CommandType;
+            cmd.CommandText = Sql;
+            cmd.Connection = conn;
         }
 
         public DataSet GetDataSet()

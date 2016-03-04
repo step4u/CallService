@@ -19,7 +19,7 @@ namespace TestTossServer
             this.Closing += MainWindow_Closing;
             this.Closed += MainWindow_Closed;
 
-            ws = new TossServer();
+            //ws = new TossServer();
             this.WindowState = WindowState.Minimized;
 
             relayserver = new RelayService();
