@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Timers;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Com.Huen.Sockets
 {
@@ -65,6 +67,20 @@ namespace Com.Huen.Sockets
 
             this.DBServer = _dbserver;
             this.PBXip = _pbxip;
+
+            //bool rs = false;
+            //using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+            //{
+            //    rs = hh.SetSystem("CTREE", "201", string.Empty, "KOR");
+            //}
+
+
+            //_pms_data_type original_data = new _pms_data_type();
+            //using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+            //{
+            //    original_data = hh.GetPolicy("201");
+            //}
+
 
             CheckRoonetsDB();
             InitTimer();
@@ -171,8 +187,9 @@ namespace Com.Huen.Sockets
 
             using (MSDBHelper db = new MSDBHelper(DBServer))
             {
-                db.Sql = string.Format("insert into INF_CT02 ( T2_ROOM, T2_CODE, T2_EMER, T2_DND, T2_MUR ) values ( '{0}', '{1}', '{2}', '{3}', '{4}' )",
-                                        sitecode + pmsdata.extension, t2_code, t2_emer, t2_dnd, t2_mur);
+                string ext = string.Format("{0:D4}", int.Parse(pmsdata.extension));
+                string sql = string.Format("insert into INF_CT02 ( T2_ROOM, T2_CODE, T2_EMER, T2_DND, T2_MUR, T2_DATE ) values ( '{0}', '{1}', '{2}', '{3}', '{4}', getdate() )", sitecode + ext, t2_code, t2_emer, t2_dnd, t2_mur);
+                db.Sql = sql;
                 try
                 {
                     db.Open();
@@ -234,7 +251,7 @@ namespace Com.Huen.Sockets
             {
                 try
                 {
-                    db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM from INF_CT01 where T1_READ=1;";
+                    db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 order by T1_SITE asc, T1_ROOM asc, T1_DATE asc";
                     db.Open();
                     dt = db.GetDataTable();
                 }
@@ -244,100 +261,116 @@ namespace Com.Huen.Sockets
                 }
             }
 
-            try
+            List<NewData> tempdata = new List<NewData> (from DataRow row in dt.AsEnumerable()
+                           select new NewData
+                           {
+                               T_ID = row[0].ToString(),
+                               T_SITE = row[1].ToString(),
+                               T_ROOM = row[2].ToString(),
+                               T_CODE = row[3].ToString(),
+                               T_PERIOD = row[4].ToString(),
+                               T_PROOM = row[5].ToString(),
+                               T_DATE = (DateTime)row[6],
+                               T_READ = int.Parse(row[7].ToString()),
+                               T_READ2 = int.Parse(row[8].ToString()),
+                               T_TXT2 = row[9].ToString()
+                           }).ToList<NewData>();
+
+            var tmpdatum = tempdata.Where(x => x.T_READ == 0);
+            foreach (NewData item in tmpdatum)
             {
-                foreach (DataRow row in dt.AsEnumerable())
+                string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
+
+                if (string.IsNullOrEmpty(roomnumberext)) continue;
+
+                _pms_data_type original_data = new _pms_data_type();
+                using (HotelHelper hh = new HotelHelper(PBXip, 33003))
                 {
-                    string roomnumberext = string.IsNullOrEmpty(row[2].ToString()) == true ? string.Empty : int.Parse(row[2].ToString()).ToString();
+                    original_data = hh.GetPolicy(roomnumberext);
+                }
 
-                    if (string.IsNullOrEmpty(roomnumberext)) continue;
+                bool result = false;
+                int count = 0;
 
-                    _pms_data_type original_data = new _pms_data_type();
-                    using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                {
+                    result = hh.SetSystem(item.T_CODE, roomnumberext, item.T_PERIOD, item.T_TXT2);
+                }
+
+                if (!result) continue;
+
+                using (MSDBHelper db = new MSDBHelper(DBServer))
+                {
+                    try
                     {
-                        original_data = hh.GetPolicy(roomnumberext);
+                        if (string.IsNullOrEmpty(item.T_TXT2))
+                        {
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        }
+                        else
+                        {
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1, T1_READ2=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        }
+
+                        db.Open();
+                        db.BeginTran();
+                        count = db.GetEffectedCount();
+                        db.Commit();
+
+                        item.T_READ2 = 1;
                     }
-
-                    bool result = false;
-                    int count = 0;
-
-                    using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                    catch (SqlException e)
                     {
-                        result = hh.SetSystem(row[3].ToString(), roomnumberext, row[4].ToString(), string.Empty);
-                    }
-
-                    if (!result) continue;
-
-                    using (MSDBHelper db = new MSDBHelper(DBServer))
-                    {
-                        try
+                        db.Rollback();
+                        using (HotelHelper hh = new HotelHelper(PBXip, 33003))
                         {
-                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_ID={0}", row[0].ToString());
-                            db.Open();
-                            db.BeginTran();
-                            count = db.GetEffectedCount();
-                            db.Commit();
+                            result = hh.RestoreSystem(original_data);
                         }
-                        catch (SqlException e)
-                        {
-                            db.Rollback();
-                            using (HotelHelper hh = new HotelHelper(PBXip, 33003))
-                            {
-                                result = hh.RestoreSystem(original_data);
-                            }
-                            continue;
-                        }
-                    }
-
-                    using (MSDBHelper db = new MSDBHelper(DBServer))
-                    {
-                        try
-                        {
-                            db.Sql = string.Format("select T1_ID, T1_SITE, T1_ROOM, T1_TXT2 from INF_CT01 where T1_READ2=0 and T1_ID={0};", row[0].ToString());
-                            db.Open();
-                            dt = db.GetDataTable();
-                        }
-                        catch (SqlException e)
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (dt.Rows.Count < 1) continue;
-
-                    using (HotelHelper hh = new HotelHelper(PBXip, 33003))
-                    {
-                        original_data = hh.GetPolicy(roomnumberext);
-                        result = hh.SetSystem(string.Empty, roomnumberext, string.Empty, dt.Rows[0][3].ToString());
-                    }
-
-                    if (!result) continue;
-
-                    using (MSDBHelper db = new MSDBHelper(DBServer))
-                    {
-                        try
-                        {
-                            db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_READ2=0 and T1_ID={0}", row[0].ToString());
-                            db.Open();
-                            db.BeginTran();
-                            count = db.GetEffectedCount();
-                            db.Commit();
-                        }
-                        catch (SqlException e)
-                        {
-                            db.Rollback();
-                            using (HotelHelper hh = new HotelHelper(PBXip, 33003))
-                            {
-                                result = hh.RestoreSystem(original_data);
-                            }
-                            continue;
-                        }
+                        continue;
                     }
                 }
             }
-            catch (Exception e)
+
+            
+            var tmpdatum2 = tempdata.Where(x => x.T_READ2 == 0 && !x.T_TXT2.Equals(string.Empty));
+            foreach (NewData item in tmpdatum2)
             {
-                util.WriteLog(e.Message);
+                string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
+
+                if (string.IsNullOrEmpty(roomnumberext)) continue;
+
+                bool result = false;
+                int count = 0;
+
+                _pms_data_type original_data = new _pms_data_type();
+                using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                {
+                    original_data = hh.GetPolicy(roomnumberext);
+                    result = hh.SetSystem(string.Empty, roomnumberext, string.Empty, dt.Rows[0][3].ToString());
+                }
+
+                if (!result) continue;
+
+                using (MSDBHelper db = new MSDBHelper(DBServer))
+                {
+                    try
+                    {
+                        db.Sql = string.Format("update INF_CT01 set T1_READ2=1 where T1_READ2=0 and T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        db.Open();
+                        db.BeginTran();
+                        count = db.GetEffectedCount();
+                        db.Commit();
+                    }
+                    catch (SqlException e)
+                    {
+                        db.Rollback();
+                        using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                        {
+                            result = hh.RestoreSystem(original_data);
+                        }
+                        continue;
+                    }
+                }
             }
 
 
@@ -383,7 +416,7 @@ namespace Com.Huen.Sockets
                     {
                         try
                         {
-                            db.Sql = string.Format("update INF_CT03 set T3_READ=1 where T3_ID={0}", row[0].ToString());
+                            db.Sql = string.Format("update INF_CT03 set T3_READ=1 where T3_SITE='{0}' and T3_ROOM='{1}'", row[1].ToString(), row[2].ToString());
                             db.Open();
                             db.BeginTran();
                             count = db.GetEffectedCount();
@@ -411,6 +444,20 @@ namespace Com.Huen.Sockets
 
             checkrootnetsdbcount++;
             Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> CheckRoonetsDB " + checkrootnetsdbcount + " was done in " + elapsedMs + "mil.");
+        }
+
+        class NewData
+        {
+            public string T_ID;
+            public string T_SITE;
+            public string T_ROOM;
+            public string T_CODE;
+            public string T_PERIOD;
+            public string T_PROOM;
+            public DateTime T_DATE;
+            public int T_READ;
+            public int T_READ2;
+            public string T_TXT2;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Com.Huen.Sockets
 {
     public class HotelHelper : IDisposable
     {
-        private const int UDP_WAITING_MISEC = 3000;
+        private const int UDP_WAITING_MISEC = 2000;
         private string PBXIP = string.Empty;
         private int PBXPORT = 33003;
 
@@ -625,6 +625,8 @@ namespace Com.Huen.Sockets
             _client.Connect(_serverEP);
 
             _pms_data_type pms_sdata = this.GetPolicies4HouseKeep(code, ext, mtime);
+            if (pms_sdata.cmd == 0) return false;
+
             _pms_data_type pms_rdata = new _pms_data_type();
 
             byte[] _sbuffer = util.GetBytes(pms_sdata);
@@ -718,6 +720,7 @@ namespace Com.Huen.Sockets
                     data.checkout_try_interval = 10;
                     data.checkout_repeat_times = 2;
                     data.checkout_ring_duration = 30;
+                    data.language = SetLanguage(language);
                     break;
                 case "2":
                     // 숙박
@@ -732,6 +735,7 @@ namespace Com.Huen.Sockets
                     data.checkout_try_interval = 10;
                     data.checkout_repeat_times = 2;
                     data.checkout_ring_duration = 30;
+                    data.language = SetLanguage(language);
                     break;
                 case "5":
                     // 투숙일 변경
@@ -746,6 +750,7 @@ namespace Com.Huen.Sockets
                     data.checkout_try_interval = 10;
                     data.checkout_repeat_times = 2;
                     data.checkout_ring_duration = 30;
+                    data.language = SetLanguage(language);
                     break;
                 default:
                     if (!string.IsNullOrEmpty(language))
@@ -753,31 +758,39 @@ namespace Com.Huen.Sockets
                         // 언어설정
                         data.cmd = STRUCTS.PMS_SET_LANGUAGE_REQ;
                         data.extension = ext;
-                        if (language.ToLower().Equals("kor"))
-                        {
-                            data.language = 2;
-                        }
-                        else if (language.ToLower().Equals("eng"))
-                        {
-                            data.language = 1;
-                        }
-                        else if (language.ToLower().Equals("chi"))
-                        {
-                            data.language = 5;
-                        }
-                        else if (language.ToLower().Equals("jap"))
-                        {
-                            data.language = 6;
-                        }
-                        else
-                        {
-                            data.language = 1;
-                        }
                     }
                     break;
             }
 
             return data;
+        }
+
+        private int SetLanguage(string language)
+        {
+            int lang = 2;
+
+            if (language.ToLower().Equals("kor"))
+            {
+                lang = 2;
+            }
+            else if (language.ToLower().Equals("eng"))
+            {
+                lang = 1;
+            }
+            else if (language.ToLower().Equals("chi"))
+            {
+                lang = 5;
+            }
+            else if (language.ToLower().Equals("jap"))
+            {
+                lang = 6;
+            }
+            else
+            {
+                lang = 2;
+            }
+
+            return lang;
         }
 
         protected _pms_data_type GetPolicies4HouseKeep(string code, string ext, string mtime)
@@ -817,6 +830,7 @@ namespace Com.Huen.Sockets
                     
                     break;
                 default:
+                    data.cmd = 0;
                     break;
             }
 
