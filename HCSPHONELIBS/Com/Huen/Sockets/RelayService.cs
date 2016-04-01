@@ -19,6 +19,7 @@ namespace Com.Huen.Sockets
 
         private string dbserver = string.Empty;
         private string pbxip = string.Empty;
+        private int pbxport = 21007;
 
         private PMSServer pmsserver;
 
@@ -52,35 +53,27 @@ namespace Com.Huen.Sockets
             }
         }
 
+        public int PBXport
+        {
+            get { return pbxport; }
+            set { this.pbxport = value; }
+        }
 
-        public RelayService() : this(string.Empty, string.Empty)
+        public RelayService() : this(string.Empty, string.Empty, 21007)
         {
         }
 
-        public RelayService(string _pbxip) : this(string.Empty, _pbxip)
+        public RelayService(string _pbxip) : this(string.Empty, _pbxip, 21007)
         {
         }
 
-        public RelayService(string _dbserver, string _pbxip)
+        public RelayService(string _dbserver, string _pbxip, int _pbxport)
         {
             this.ReadIni();
 
             this.DBServer = _dbserver;
             this.PBXip = _pbxip;
-
-            //bool rs = false;
-            //using (HotelHelper hh = new HotelHelper(PBXip, 33003))
-            //{
-            //    rs = hh.SetSystem("CTREE", "201", string.Empty, "KOR");
-            //}
-
-
-            //_pms_data_type original_data = new _pms_data_type();
-            //using (HotelHelper hh = new HotelHelper(PBXip, 33003))
-            //{
-            //    original_data = hh.GetPolicy("201");
-            //}
-
+            this.PBXport = _pbxport;
 
             CheckRoonetsDB();
             InitTimer();
@@ -239,14 +232,14 @@ namespace Com.Huen.Sockets
             CheckRoonetsDB();
         }
 
-        private int checkrootnetsdbcount = 0;
+        // private int checkrootnetsdbcount = 0;
         private void CheckRoonetsDB()
         {
             var watch = Stopwatch.StartNew();
 
             DataTable dt = null;
 
-            // Check House Check IN/OUT
+            // Check IN/OUT
             using (MSDBHelper db = new MSDBHelper(DBServer))
             {
                 try
@@ -284,7 +277,7 @@ namespace Com.Huen.Sockets
                 if (string.IsNullOrEmpty(roomnumberext)) continue;
 
                 _pms_data_type original_data = new _pms_data_type();
-                using (HotelHelper hh = new HotelHelper(PBXip, 33003))
+                using (HotelHelper hh = new HotelHelper(PBXip, PBXport))
                 {
                     original_data = hh.GetPolicy(roomnumberext);
                 }
@@ -442,8 +435,8 @@ namespace Com.Huen.Sockets
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
 
-            checkrootnetsdbcount++;
-            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> CheckRoonetsDB " + checkrootnetsdbcount + " was done in " + elapsedMs + "mil.");
+            // checkrootnetsdbcount++;
+            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> CheckRoonetsDB was done in " + elapsedMs + " mil.");
         }
 
         class NewData

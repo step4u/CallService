@@ -207,6 +207,7 @@
     <Compile Include="Com\Huen\Libs\CompareString.cs" />
     <Compile Include="Com\Huen\Libs\util.cs" />
     <Compile Include="Com\Huen\Sockets\AlchemyClientCS.cs" />
+    <Compile Include="Com\Huen\Sockets\HotelHelper2.cs" />
     <Compile Include="Com\Huen\Sockets\HotelHelper.cs" />
     <Compile Include="Com\Huen\Sockets\PMSServer.cs" />
     <Compile Include="Com\Huen\Sockets\CDRecorder.cs" />
