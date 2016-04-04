@@ -4,19 +4,26 @@ using System.Net.Sockets;
 using Com.Huen.Libs;
 using Com.Huen.DataModel;
 using System.Threading;
+using System.Linq;
 
 namespace Com.Huen.Sockets
 {
     public class HotelHelper2 : IDisposable
     {
+        private IPEndPoint remoteEp;
+        private int expires = 60 * 1000;
+
         private UdpClient client;
-        private Thread sockthread;
+        // private Thread sockthread;
         private const int UDP_WAITING_MISEC = 2000;
         private string PBXIP = string.Empty;
         private int PBXPORT = 21007;
+
+        IPAddress LOCALIPADDRESS = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+        private int LOCALPORT = 21008;
+
         private bool IsRegistered = false;
         private System.Timers.Timer regtimer = null;
-        private int REGISTER_INTERVAL = 60;
 
         public HotelHelper2() : this ("127.0.0.1", 21007)
         {
@@ -31,7 +38,6 @@ namespace Com.Huen.Sockets
             PBXIP = _pbxip;
             PBXPORT = _pbxport;
             
-
             this.InitSocket();
         }
 
@@ -39,14 +45,15 @@ namespace Com.Huen.Sockets
         {
             try
             {
-                IPEndPoint remoteEp = new IPEndPoint(IPAddress.Parse(this.PBXIP), this.PBXPORT);
-                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 0);
+                remoteEp = new IPEndPoint(IPAddress.Parse(this.PBXIP), this.PBXPORT);
+                IPEndPoint localEp = new IPEndPoint(LOCALIPADDRESS, LOCALPORT);
                 client = new UdpClient(localEp);
+                client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
                 client.Connect(remoteEp);
 
-                sockthread = new Thread(new ThreadStart(SendReceiveMessage));
-                sockthread.IsBackground = true;
-                sockthread.Start();
+                //sockthread = new Thread(new ThreadStart(SendReceiveMessage));
+                //sockthread.IsBackground = true;
+                //sockthread.Start();
 
                 this.Register();
             }
@@ -60,38 +67,16 @@ namespace Com.Huen.Sockets
             }
         }
 
-        private void SendReceiveMessage()
-        {
-            try
-            {
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
-
-                while (true)
-                {
-                    byte[] buffer = null;
-                    buffer = client.Receive(ref ipep);
-
-                    if (buffer.Length > 0)
-                    {
-                        
-                    }
-                }
-            }
-            catch (SocketException e)
-            {
-            }
-        }
-
         public void StopSocket()
         {
             try
             {
-                if (sockthread == null) return;
+                //if (sockthread == null) return;
 
-                if (sockthread.IsAlive)
-                {
-                    sockthread.Abort();
-                }
+                //if (sockthread.IsAlive)
+                //{
+                //    sockthread.Abort();
+                //}
 
                 if (client != null)
                 {
@@ -110,52 +95,69 @@ namespace Com.Huen.Sockets
 
         public void RegTimerInit()
         {
-            if (!this.IsRegistered)
-            {
-                regtimer = new System.Timers.Timer();
-                regtimer.Interval = REGISTER_INTERVAL;
-                regtimer.Elapsed += Regtimer_Elapsed;
-                regtimer.Start();
-            }
+            if (IsRegistered) return;
+
+            regtimer = new System.Timers.Timer();
+            regtimer.Interval = expires;
+            regtimer.Elapsed += Regtimer_Elapsed;
+            regtimer.Start();
         }
 
         private void Regtimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Register();
+            // System.Diagnostics.Debug.WriteLine("Registered");
         }
 
         public void Register()
         {
-            CommandMsg _msg = GetCommandMsg(STRUCTS.REGISTER_REQ);
-            byte[] bytes = util.GetBytes(_msg);
+            _pms_reg_t _msg = GetMsg(STRUCTS.PMS_REGISTER_REQ);
+            byte[] _sbuffer = util.GetBytes(_msg);
+            byte[] _rbuffer = null;
 
             try
             {
-                client.Send(bytes, bytes.Length);
+                client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = client.Receive(ref remoteEp);
+
+                _msg = util.GetObject<_pms_reg_t>(_rbuffer);
+
+                if (_msg.status == 0)
+                {
+                    expires = _msg.expires * 1000;
+                    this.RegTimerInit();
+                    this.IsRegistered = true;
+                }
             }
-            catch (SocketException ex)
+            catch (SocketException sockex)
             {
-                util.WriteLog(ex.ErrorCode, ex.Message.ToString());
+                util.WriteLog(sockex.Message);
             }
         }
 
         public void UnRegister()
         {
-            if (client == null) return;
-
-            CommandMsg _msg = GetCommandMsg(USRSTRUCTS.UNREGISTER_REQ);
-            byte[] bytes = util.GetBytes(_msg);
+            _pms_reg_t _msg = GetMsg(STRUCTS.PMS_UNREGISTER_REQ);
+            byte[] _sbuffer = util.GetBytes(_msg);
+            byte[] _rbuffer = null;
 
             try
             {
-                client.Send(bytes, bytes.Length);
+                client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = client.Receive(ref remoteEp);
+
+                _msg = util.GetObject<_pms_reg_t>(_rbuffer);
+
+                if (_msg.status == 0)
+                {
+                    this.IsRegistered = false;
+                }
             }
-            catch (SocketException ex)
+            catch (SocketException sockex)
             {
-                util.WriteLog(ex.ErrorCode, ex.Message.ToString());
+                util.WriteLog(sockex.Message);
             }
         }
-
 
         // 모닝콜 조회
         public _pms_data_type GetMorningCall(string _ext)
@@ -698,12 +700,6 @@ namespace Com.Huen.Sockets
         {
             bool result = false;
 
-            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
-            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
-            UdpClient _client = new UdpClient();
-            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
-            _client.Connect(_serverEP);
-
             _pms_data_type pms_sdata = this.GetPolicies(code, ext, period, language);
             _pms_data_type pms_rdata = new _pms_data_type();
 
@@ -712,8 +708,8 @@ namespace Com.Huen.Sockets
 
             try
             {
-                _client.Send(_sbuffer, _sbuffer.Length);
-                _rbuffer = _client.Receive(ref _remoteEP);
+                client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = client.Receive(ref remoteEp);
 
                 pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
 
@@ -727,48 +723,45 @@ namespace Com.Huen.Sockets
                 util.WriteLog(sockex.Message);
                 result = false;
             }
-            _client.Close();
 
             return result;
         }
 
         // for House Keep
-        public bool SetHouseKeep(string code, string ext, string mtime)
+        public bool SetHouseKeep(string code, string ext, string txt)
         {
             bool result = false;
 
-            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
-            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
-            UdpClient _client = new UdpClient();
-            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
-            _client.Connect(_serverEP);
-
-            _pms_data_type pms_sdata = this.GetPolicies4HouseKeep(code, ext, mtime);
-            if (pms_sdata.cmd == 0) return false;
-
-            _pms_data_type pms_rdata = new _pms_data_type();
-
-            byte[] _sbuffer = util.GetBytes(pms_sdata);
-            byte[] _rbuffer = null;
-
-            try
+            _pms_data_type pms_sdata = this.GetPolicies4HouseKeep(code, ext, txt);
+            if (pms_sdata.cmd == 0)
             {
-                _client.Send(_sbuffer, _sbuffer.Length);
-                _rbuffer = _client.Receive(ref _remoteEP);
+                result = true;
+            }
+            else
+            {
+                _pms_data_type pms_rdata = new _pms_data_type();
 
-                pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
+                byte[] _sbuffer = util.GetBytes(pms_sdata);
+                byte[] _rbuffer = null;
 
-                if (pms_rdata.status == 0)
+                try
                 {
-                    result = true;
+                    client.Send(_sbuffer, _sbuffer.Length);
+                    _rbuffer = client.Receive(ref remoteEp);
+
+                    pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
+
+                    if (pms_rdata.status == 0)
+                    {
+                        result = true;
+                    }
+                }
+                catch (SocketException sockex)
+                {
+                    util.WriteLog(sockex.Message);
+                    result = false;
                 }
             }
-            catch (SocketException sockex)
-            {
-                util.WriteLog(sockex.Message);
-                result = false;
-            }
-            _client.Close();
 
             return result;
         }
@@ -778,20 +771,14 @@ namespace Com.Huen.Sockets
             bool result = false;
             _pms_data_type rdata = new _pms_data_type();
 
-            IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
-            IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
-            UdpClient _client = new UdpClient();
-            _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
-            _client.Connect(_serverEP);
-
             data.cmd = STRUCTS.PMS_SET_ALL_REQ;
             byte[] _sbuffer = util.GetBytes(data);
             byte[] _rbuffer = null;
 
             try
             {
-                _client.Send(_sbuffer, _sbuffer.Length);
-                _rbuffer = _client.Receive(ref _remoteEP);
+                client.Send(_sbuffer, _sbuffer.Length);
+                _rbuffer = client.Receive(ref remoteEp);
 
                 rdata = util.GetObject<_pms_data_type>(_rbuffer);
             }
@@ -800,7 +787,6 @@ namespace Com.Huen.Sockets
                 util.WriteLog(sockex.Message);
                 result = false;
             }
-            _client.Close();
 
             if (rdata.cmd == STRUCTS.PMS_SET_ALL_RES)
             {
@@ -870,13 +856,13 @@ namespace Com.Huen.Sockets
                     data.checkout_ring_duration = 30;
                     data.language = SetLanguage(language);
                     break;
+                case "O":
+                    // 정보 변경
+                    // 언어설정
+                    data.cmd = STRUCTS.PMS_SET_LANGUAGE_REQ;
+                    data.extension = ext;
+                    break;
                 default:
-                    if (!string.IsNullOrEmpty(language))
-                    {
-                        // 언어설정
-                        data.cmd = STRUCTS.PMS_SET_LANGUAGE_REQ;
-                        data.extension = ext;
-                    }
                     break;
             }
 
@@ -911,7 +897,7 @@ namespace Com.Huen.Sockets
             return lang;
         }
 
-        protected _pms_data_type GetPolicies4HouseKeep(string code, string ext, string mtime)
+        protected _pms_data_type GetPolicies4HouseKeep(string code, string ext, string txt)
         {
             _pms_data_type data = new _pms_data_type();
  
@@ -933,8 +919,8 @@ namespace Com.Huen.Sockets
                     // 모닝콜 설정
                     data.cmd = STRUCTS.PMS_SET_MORNING_CALL_REQ;
                     data.extension = ext;
-                    string hh = mtime.Substring(0, 2);
-                    string mm = mtime.Substring(2, 2);
+                    string hh = txt.Substring(8, 2);
+                    string mm = txt.Substring(10, 2);
                     int hour = string.IsNullOrEmpty(hh) == true ? 0 : int.Parse(hh);
                     int minutes = string.IsNullOrEmpty(mm) == true ? 0 : int.Parse(mm);
                     break;
@@ -982,22 +968,9 @@ namespace Com.Huen.Sockets
             return result;
         }
 
-
-        public _pms_reg_t GetMsg(int st)
+        public _pms_reg_t GetMsg(int _cmd)
         {
-            _pms_reg_t msg = new _pms_reg_t();
-
-            switch (st)
-            {
-                case STRUCTS.PMS_REGISTER_REQ:
-                    msg.port = client.Client.LocalEndPoint
-                    break;
-                case STRUCTS.PMS_UNREGISTER_REQ:
-
-                    break;
-            }
-
-            return msg;
+            return new _pms_reg_t() { cmd = _cmd, ip = LOCALIPADDRESS.ToString(), port = LOCALPORT, status = 0 };
         }
 
     }

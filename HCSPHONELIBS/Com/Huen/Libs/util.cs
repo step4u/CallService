@@ -441,16 +441,16 @@ namespace Com.Huen.Libs
                 __w.Flush();
                 __w.Close();
 
-                foreach (var logfile in System.IO.Directory.EnumerateFiles("./log"))
-                {
-                    if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
-                    {
-                        if (File.Exists(logfile))
-                        {
-                            File.Delete(logfile);
-                        }
-                    }
-                }
+                //foreach (var logfile in System.IO.Directory.EnumerateFiles("./log"))
+                //{
+                //    if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
+                //    {
+                //        if (File.Exists(logfile))
+                //        {
+                //            File.Delete(logfile);
+                //        }
+                //    }
+                //}
             }
             catch(IOException __ex)
             {
@@ -491,14 +491,14 @@ namespace Com.Huen.Libs
             w.Flush();
             w.Close();
 
-            foreach (var logfile in System.IO.Directory.EnumerateFiles(logpath))
-            {
-                if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
-                {
-                    if (File.Exists(logfile))
-                        File.Delete(logfile);
-                }
-            }
+            //foreach (var logfile in System.IO.Directory.EnumerateFiles(logpath))
+            //{
+            //    if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
+            //    {
+            //        if (File.Exists(logfile))
+            //            File.Delete(logfile);
+            //    }
+            //}
         }
 
         public static void Log2DB(string ext, string msg, string chk)
