@@ -814,7 +814,7 @@ namespace Com.Huen.Views
             foreach (RoomItem item in checkinFlyout_lb.ItemsSource)
             {
                 var pmsdata = item.PMSDATA;
-                pmsdata.cmd = STRUCTS.PMS_SET_ALL_REQ;
+                pmsdata.cmd = STRUCTS.CGI_PMS_SET_ALL_REQ;
                 pmsdata.repeat_times = 5;
                 pmsdata.ring_duration = 120;
                 pmsdata.try_interval = 3;
