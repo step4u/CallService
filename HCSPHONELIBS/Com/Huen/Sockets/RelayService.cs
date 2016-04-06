@@ -77,15 +77,13 @@ namespace Com.Huen.Sockets
             this.PBXport = _pbxport;
 
             h2 = new HotelHelper2(PBXip, PBXport);
+            h2.PassDevice2PmsEvent += H2_PassDevice2PmsEvent;
 
             //CheckRoonetsDB();
             InitTimer();
-
-            pmsserver = new PMSServer();
-            pmsserver.ReqPMSSetEvent += Pmsserver_ReqPMSSetEvent;
         }
 
-        private void Pmsserver_ReqPMSSetEvent(PMSServer sender, _pms_data_type pmsdata)
+        private void H2_PassDevice2PmsEvent(object sender, _pms_data_type pmsdata)
         {
             string t2_code = string.Empty;
             string t2_emer = "0";
@@ -95,15 +93,14 @@ namespace Com.Huen.Sockets
             switch (pmsdata.cmd)
             {
                 case STRUCTS.PMS_SET_MORNING_CALL_REQ:
-                    // Debug.WriteLine("Pmsserver_ReqPMSSetEvent: " + pmsdata.cmd + " // " + pmsdata.status);
                     t2_code = "C";
                     break;
-                case STRUCTS.PMS_CLEAR_MORNING_CALL_REQ:
-                    t2_code = "D";
+                //case STRUCTS.PMS_CLEAR_MORNING_CALL_REQ:
+                //    t2_code = "D";
+                //    break;
+                case STRUCTS.PMS_SET_LANGUAGE_REQ:
                     break;
-                default:
-                    // Debug.WriteLine("Pmsserver_ReqPMSSetEvent: " + pmsdata.function_key + " // " + pmsdata.function_key_cmd);
-
+                case STRUCTS.PMS_REPORT_FUNCTION_KEY_REQ:
                     if (pmsdata.function_key.Equals(fk_cleanroom))
                     {
                         switch (pmsdata.function_key_cmd)
@@ -179,6 +176,26 @@ namespace Com.Huen.Sockets
                         }
                     }
                     break;
+                case STRUCTS.PMS_REPORT_MAKEUP_STATUS_REQ:
+                    switch (pmsdata.makeup_room_status)
+                    {
+                        case 1:
+                            t2_code = "0";
+                            break;
+                        case 2:
+                            t2_code = "2";
+                            break;
+                        case 3:
+                            t2_code = "9";
+                            break;
+                        case 4:
+                            t2_code = "2";
+                            break;
+                    }
+                    break;
+                default:
+                    // Debug.WriteLine("Pmsserver_ReqPMSSetEvent: " + pmsdata.function_key + " // " + pmsdata.function_key_cmd);
+                    break;
             }
 
             using (MSDBHelper db = new MSDBHelper(DBServer))
@@ -192,11 +209,19 @@ namespace Com.Huen.Sockets
                     db.BeginTran();
                     int count = db.GetEffectedCount();
                     db.Commit();
+
+                    h2.Send(pmsdata);
                 }
                 catch (SqlException e)
                 {
                     util.WriteLog(e.Message);
                     db.Rollback();
+                    pmsdata.status = STRUCTS.PMS_STATUS_FAIL;
+                    h2.Send(pmsdata);
+                }
+                catch (System.Net.Sockets.SocketException ex)
+                {
+                    util.WriteLog(ex.Message);
                 }
             }
         }

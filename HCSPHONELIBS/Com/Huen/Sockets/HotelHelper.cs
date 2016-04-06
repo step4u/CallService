@@ -54,7 +54,7 @@ namespace Com.Huen.Sockets
 
                 pms_data_type = new _pms_data_type()
                 {
-                    cmd = STRUCTS.PMS_GET_MORNING_CALL_REQ
+                    cmd = STRUCTS.CGI_PMS_GET_MORNING_CALL_REQ
                     ,
                     extension = _ext
                 };
@@ -72,7 +72,7 @@ namespace Com.Huen.Sockets
             }
             catch (SocketException ex)
             {
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_RES, status = 1, extension = _ext, hour = -1, minutes = -1, try_interval = 0, repeat_times = 0, repeat_week = 0, ring_duration = 0, week = string.Empty };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_RES, status = 1, extension = _ext, hour = -1, minutes = -1, try_interval = 0, repeat_times = 0, repeat_week = 0, ring_duration = 0, week = string.Empty };
             }
 
             return pms_data_type;
@@ -89,7 +89,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_REQ
+                cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_REQ
                 ,
                 extension = _ext
                 ,
@@ -120,7 +120,7 @@ namespace Com.Huen.Sockets
             }
             catch (SocketException e)
             {
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_RES, status = 1, extension = _ext, hour = -1, minutes = -1, try_interval = 0, repeat_times = 0, repeat_week = 0, ring_duration = 0, week = string.Empty };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_RES, status = 1, extension = _ext, hour = -1, minutes = -1, try_interval = 0, repeat_times = 0, repeat_week = 0, ring_duration = 0, week = string.Empty };
             }
 
             _client.Close();
@@ -154,7 +154,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_REQ
+                cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_REQ
                 , extension = _ext
             };
             byte[] _sbuffer = util.GetBytes(pms_data_type);
@@ -172,7 +172,7 @@ namespace Com.Huen.Sockets
             catch(SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_RES, status = 1 };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_RES, status = 1 };
             }
             _client.Close();
 
@@ -204,7 +204,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_REQ
+                cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_REQ
                 ,
                 extension = _ext
                 ,
@@ -249,7 +249,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_GET_ALL_REQ
+                cmd = STRUCTS.CGI_PMS_GET_ALL_REQ
                 , extension = _ext
             };
             byte[] _sbuffer = util.GetBytes(pms_data_type);
@@ -277,7 +277,7 @@ namespace Com.Huen.Sockets
                     states = 1;
                 }
 
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_GET_OUTGOING_POLICY_RES, status = states, extension = _ext, allowedPrefix = string.Empty, forbiddenPrefix = string.Empty };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_GET_OUTGOING_POLICY_RES, status = states, extension = _ext, allowedPrefix = string.Empty, forbiddenPrefix = string.Empty };
             }
 
             _client.Close();
@@ -299,7 +299,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_SET_ALL_REQ
+                cmd = STRUCTS.CGI_PMS_SET_ALL_REQ
                 , extension = _chkinroom.roomnum
                 , language = _chkinroom.language
                 , hour = -1
@@ -369,14 +369,14 @@ namespace Com.Huen.Sockets
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_SET_ALL_RES, status = 1 };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
 
             bool _result = false;
 
-            if (pms_data_type.cmd == STRUCTS.PMS_SET_ALL_RES)
+            if (pms_data_type.cmd == STRUCTS.CGI_PMS_SET_ALL_RES)
             {
                 switch (pms_data_type.status)
                 {
@@ -420,14 +420,14 @@ namespace Com.Huen.Sockets
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_SET_ALL_RES, status = 1 };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
 
             bool _result = false;
 
-            if (pms_data_type.cmd == STRUCTS.PMS_SET_ALL_RES)
+            if (pms_data_type.cmd == STRUCTS.CGI_PMS_SET_ALL_RES)
             {
                 switch (pms_data_type.status)
                 {
@@ -462,7 +462,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_REQ,
+                cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_REQ,
                 extension = _ext,
             };
 
@@ -479,14 +479,14 @@ namespace Com.Huen.Sockets
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
             }
 
             _client.Close();
 
             bool _result = false;
 
-            if (pms_data_type.cmd == STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES)
+            if (pms_data_type.cmd == STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_RES)
             {
                 switch (pms_data_type.status)
                 {
@@ -520,7 +520,7 @@ namespace Com.Huen.Sockets
 
             _pms_data_type pms_data_type = new _pms_data_type()
             {
-                cmd = STRUCTS.PMS_SET_POST_PARCEL_REQ,
+                cmd = STRUCTS.CGI_PMS_SET_POST_PARCEL_REQ,
                 extension = _ext,
                 post_parcel = _value
             };
@@ -538,14 +538,14 @@ namespace Com.Huen.Sockets
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.PMS_SET_ALL_RES, status = 1 };
+                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
 
             bool _result = false;
 
-            if (pms_data_type.cmd == STRUCTS.PMS_SET_POST_PARCEL_RES)
+            if (pms_data_type.cmd == STRUCTS.CGI_PMS_SET_POST_PARCEL_RES)
             {
                 switch (pms_data_type.status)
                 {
@@ -666,7 +666,7 @@ namespace Com.Huen.Sockets
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
 
-            data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+            data.cmd = STRUCTS.CGI_PMS_SET_ALL_REQ;
             byte[] _sbuffer = util.GetBytes(data);
             byte[] _rbuffer = null;
 
@@ -684,7 +684,7 @@ namespace Com.Huen.Sockets
             }
             _client.Close();
 
-            if (rdata.cmd == STRUCTS.PMS_SET_ALL_RES)
+            if (rdata.cmd == STRUCTS.CGI_PMS_SET_ALL_RES)
             {
                 if (rdata.status == 0)
                 {
@@ -704,13 +704,13 @@ namespace Com.Huen.Sockets
             {
                 case "0":
                     // 퇴실
-                    data.cmd = STRUCTS.PMS_CLEAR_FUNCTION_KEY_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_REQ;
                     data.extension = ext;
                     break;
                 case "1":
                     // 대실
                     tmpdate = DateTime.Now.AddHours(4);
-                    data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_ALL_REQ;
                     data.extension = ext;
                     data.checkout_month = tmpdate.Month;
                     data.checkout_day = tmpdate.Day;
@@ -725,7 +725,7 @@ namespace Com.Huen.Sockets
                 case "2":
                     // 숙박
                     tmpdate = DateTime.Now.AddDays(string.IsNullOrEmpty(period) == true ? 0 : int.Parse(period));
-                    data.cmd = STRUCTS.PMS_SET_ALL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_ALL_REQ;
                     data.extension = ext;
                     data.checkout_month = tmpdate.Month;
                     data.checkout_day = tmpdate.Day;
@@ -740,7 +740,7 @@ namespace Com.Huen.Sockets
                 case "5":
                     // 투숙일 변경
                     tmpdate = DateTime.Now.AddDays(string.IsNullOrEmpty(period) == true ? 0 : int.Parse(period));
-                    data.cmd = STRUCTS.PMS_SET_CHECKOUT_TIME_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_CHECKOUT_TIME_REQ;
                     data.extension = ext;
                     data.checkout_month = tmpdate.Month;
                     data.checkout_day = tmpdate.Day;
@@ -801,19 +801,19 @@ namespace Com.Huen.Sockets
             {
                 case "A":
                     // 우편물 도착 알림
-                    data.cmd = STRUCTS.PMS_SET_POST_PARCEL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_POST_PARCEL_REQ;
                     data.extension = ext;
                     data.post_parcel = 1;
                     break;
                 case "B":
                     // 우편물 도착 알림 취소
-                    data.cmd = STRUCTS.PMS_SET_POST_PARCEL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_POST_PARCEL_REQ;
                     data.extension = ext;
                     data.post_parcel = 0;
                     break;
                 case "C":
                     // 모닝콜 설정
-                    data.cmd = STRUCTS.PMS_SET_MORNING_CALL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_SET_MORNING_CALL_REQ;
                     data.extension = ext;
                     string hh = mtime.Substring(0, 2);
                     string mm = mtime.Substring(2, 2);
@@ -822,7 +822,7 @@ namespace Com.Huen.Sockets
                     break;
                 case "D":
                     // 모닝콜 취소
-                    data.cmd = STRUCTS.PMS_CLEAR_MORNING_CALL_REQ;
+                    data.cmd = STRUCTS.CGI_PMS_CLEAR_MORNING_CALL_REQ;
                     data.extension = ext;
                     break;
                 case "J":
@@ -841,7 +841,7 @@ namespace Com.Huen.Sockets
         {
             bool result = false;
 
-            if (sdata.cmd == STRUCTS.PMS_CLEAR_FUNCTION_KEY_RES)
+            if (sdata.cmd == STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_RES)
             {
                 switch (sdata.status)
                 {
