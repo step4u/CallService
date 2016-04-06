@@ -324,10 +324,10 @@ namespace Com.Huen.DataModel
                     }
                 }
 
-                int err_count = 0;
                 ObservableCollection<RoomItem> _list = new ObservableCollection<RoomItem>();
                 foreach (DataRow _row in dt1.Rows)
                 {
+                    int err_count = 0;
                     RoomItem txtroom = new RoomItem() {
                         RoomNum = _row[0].ToString(),
                         States = string.IsNullOrEmpty(_row[1].ToString()) == true || _row[1].ToString().Equals("0") ? "0" : "1",
@@ -347,15 +347,11 @@ namespace Com.Huen.DataModel
                     _pms_data_type pms_data_type;
                     using (HotelHelper hh = new HotelHelper(util.PBXIP))
                     {
-                        if (err_count > 1)
-                        {
-                            break;
-                        }
-
                         pms_data_type = hh.GetPolicy(_row[2].ToString());
                         if (pms_data_type.status == STRUCTS.ERR_SOCKET_TIMEOUT)
                         {
-                            err_count++;
+                            _list.Add(txtroom);
+                            continue;
                         }
                     }
                     txtroom.Hour = pms_data_type.hour;

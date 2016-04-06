@@ -16,7 +16,7 @@ namespace Com.Huen.Sockets
 {
     public class HotelHelper : IDisposable
     {
-        private const int UDP_WAITING_MISEC = 3000;
+        private const int UDP_WAITING_MISEC = 2000;
         private string PBXIP = string.Empty;
         private int PBXPORT = 33003;
 

@@ -9,6 +9,8 @@ namespace RelayService
         public RelayService()
         {
             InitializeComponent();
+
+            System.IO.Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
         }
 
         protected override void OnStart(string[] args)

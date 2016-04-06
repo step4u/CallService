@@ -17,18 +17,18 @@ namespace Com.Huen.Converter
                         System.Globalization.CultureInfo culture)
         {
             string _outStr = string.Empty;
-            int _value = int.Parse(value.ToString());
+            //int _value = int.Parse(value.ToString());
 
-            switch (_value)
+            switch (value.ToString())
             {
-                case 1:
+                case "1":
                     _outStr = "EN";
                     break;
-                case 2:
+                case "2":
                     _outStr = "KR";
                     break;
                 default:
-                    _outStr = string.Empty;
+                    _outStr = "KR";
                     break;
             }
 
