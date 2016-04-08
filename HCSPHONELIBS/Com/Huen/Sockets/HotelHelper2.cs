@@ -51,7 +51,7 @@ namespace Com.Huen.Sockets
             try
             {
                 remoteEp = new IPEndPoint(IPAddress.Parse(this.PBXIP), this.PBXPORT);
-                IPEndPoint localEp = new IPEndPoint(LOCALIPADDRESS, LOCALPORT);
+                IPEndPoint localEp = new IPEndPoint(IPAddress.Any, LOCALPORT);
                 client = new UdpClient(localEp);
                 // client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
                 client.Connect(remoteEp);

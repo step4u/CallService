@@ -14,7 +14,7 @@ namespace Com.Huen.Sockets
     public class RelayService
     {
         private Timer timer;
-        private const int timerInterval = 60000;
+        private const int timerInterval = 30000;
         private string strconnection = "Data Source={0}; Initial Catalog=INF_FDESK; Persist Security Info=True; User ID=inf_ctre; Password=ctree0211@";
 
         private string dbserver = string.Empty;
@@ -327,7 +327,7 @@ namespace Com.Huen.Sockets
                 }
 
 
-                if (!result) continue;
+                //if (!result) continue;
 
                 if (item.T_CODE.Equals("O"))
                 {
@@ -348,7 +348,7 @@ namespace Com.Huen.Sockets
                         {
                             db.Rollback();
                             result = h2.RestoreSystem(original_data);
-                            continue;
+                            //continue;
                         }
                     }
                 }
@@ -358,14 +358,14 @@ namespace Com.Huen.Sockets
                     {
                         try
                         {
-                            if (string.IsNullOrEmpty(item.T_TXT2))
-                            {
-                                db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            }
-                            else
-                            {
+                            //if (string.IsNullOrEmpty(item.T_TXT2))
+                            //{
+                            //    db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                            //}
+                            //else
+                            //{
                                 db.Sql = string.Format("update INF_CT01 set T1_READ=1, T1_READ2=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            }
+                            //}
 
                             db.Open();
                             db.BeginTran();
@@ -379,7 +379,7 @@ namespace Com.Huen.Sockets
                         {
                             db.Rollback();
                             result = h2.RestoreSystem(original_data);
-                            continue;
+                            //continue;
                         }
                     }
                 }
@@ -428,7 +428,7 @@ namespace Com.Huen.Sockets
 
                     result = h2.SetHouseKeep(item.T_CODE, roomnumberext, item.T_TXT);
 
-                    if (!result) continue;
+                    //if (!result) continue;
 
                     using (MSDBHelper db = new MSDBHelper(DBServer))
                     {
