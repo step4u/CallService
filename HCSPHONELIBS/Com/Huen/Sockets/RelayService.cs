@@ -21,7 +21,6 @@ namespace Com.Huen.Sockets
         private string pbxip = string.Empty;
         private int pbxport = 21007;
 
-        private PMSServer pmsserver;
         private HotelHelper2 h2;
 
         public string DBServer
@@ -271,7 +270,8 @@ namespace Com.Huen.Sockets
             {
                 try
                 {
-                    db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 order by T1_SITE asc, T1_ROOM asc, T1_DATE asc";
+                    //db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 order by T1_SITE asc, T1_ROOM asc, T1_DATE asc";
+                    db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 where T1_READ=0 or T1_READ2=0 order by T1_DATE asc";
                     db.Open();
                     dt = db.GetDataTable();
                 }
@@ -296,8 +296,8 @@ namespace Com.Huen.Sockets
                                T_TXT2 = row[9].ToString()
                            }).ToList<TCT01>();
 
-            var tmpdatum = tempdata.Where(x => x.T_READ == 0 || x.T_READ2 == 0);
-            foreach (TCT01 item in tmpdatum)
+            //var tmpdatum = tempdata.Where(x => x.T_READ == 0 || x.T_READ2 == 0);
+            foreach (TCT01 item in tempdata)
             {
                 string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
 
@@ -312,6 +312,8 @@ namespace Com.Huen.Sockets
                 if (item.T_CODE.Equals("3"))
                 {
                     result = h2.SetSystem("0", roomnumberext, item.T_PERIOD, item.T_TXT2);
+
+                    roomnumberext = string.IsNullOrEmpty(item.T_PROOM) == true ? string.Empty : int.Parse(item.T_PROOM).ToString();
                     if (item.T_PERIOD.Equals("0"))
                     {
                         result = h2.SetSystem("1", roomnumberext, item.T_PERIOD, item.T_TXT2);
@@ -325,9 +327,6 @@ namespace Com.Huen.Sockets
                 {
                     result = h2.SetSystem(item.T_CODE, roomnumberext, item.T_PERIOD, item.T_TXT2);
                 }
-
-
-                //if (!result) continue;
 
                 if (item.T_CODE.Equals("O"))
                 {
@@ -348,7 +347,6 @@ namespace Com.Huen.Sockets
                         {
                             db.Rollback();
                             result = h2.RestoreSystem(original_data);
-                            //continue;
                         }
                     }
                 }
@@ -379,7 +377,6 @@ namespace Com.Huen.Sockets
                         {
                             db.Rollback();
                             result = h2.RestoreSystem(original_data);
-                            //continue;
                         }
                     }
                 }
@@ -415,8 +412,8 @@ namespace Com.Huen.Sockets
 
             try
             {
-                var tempdatum2 = tempdata2.Where(x => x.T_READ == 0);
-                foreach (TCT03 item in tempdatum2)
+                //var tempdatum2 = tempdata2.Where(x => x.T_READ == 0);
+                foreach (TCT03 item in tempdata2)
                 {
                     string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
 
