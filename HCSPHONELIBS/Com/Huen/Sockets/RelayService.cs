@@ -303,7 +303,7 @@ namespace Com.Huen.Sockets
 
                 if (string.IsNullOrEmpty(roomnumberext)) continue;
 
-                _pms_data_type original_data = new _pms_data_type();
+                _cgi_pms_data_type original_data = new _cgi_pms_data_type();
                 original_data = h2.GetPolicy(roomnumberext);
 
                 bool result = false;
@@ -417,7 +417,7 @@ namespace Com.Huen.Sockets
                 {
                     string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
 
-                    _pms_data_type original_data = new _pms_data_type();
+                    _cgi_pms_data_type original_data = new _cgi_pms_data_type();
                     original_data = h2.GetPolicy(roomnumberext);
 
                     bool result = false;
