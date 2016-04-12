@@ -338,17 +338,25 @@ namespace Com.Huen.Sockets
 
                 if (item.T_CODE.Equals("3"))
                 {
-                    roomnumberext = string.IsNullOrEmpty(item.T_PROOM) == true ? string.Empty : int.Parse(item.T_PROOM).ToString();
-                    result = h2.SetSystem("0", roomnumberext, item.T_PERIOD, item.T_TXT2);
-
-                    roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
-                    if (item.T_PERIOD.Equals("0"))
+                    if (item.T_ROOM.Equals(item.T_PROOM))
                     {
-                        result = h2.SetSystem("1", roomnumberext, item.T_PERIOD, item.T_TXT2);
+                        // 일자변경
+                        result = h2.SetSystem("5", roomnumberext, item.T_PERIOD, item.T_TXT2);
                     }
                     else
                     {
-                        result = h2.SetSystem("2", roomnumberext, item.T_PERIOD, item.T_TXT2);
+                        roomnumberext = string.IsNullOrEmpty(item.T_PROOM) == true ? string.Empty : int.Parse(item.T_PROOM).ToString();
+                        result = h2.SetSystem("0", roomnumberext, item.T_PERIOD, item.T_TXT2);
+
+                        roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
+                        if (item.T_PERIOD.Equals("0"))
+                        {
+                            result = h2.SetSystem("1", roomnumberext, item.T_PERIOD, item.T_TXT2);
+                        }
+                        else
+                        {
+                            result = h2.SetSystem("2", roomnumberext, item.T_PERIOD, item.T_TXT2);
+                        }
                     }
                 }
                 else
