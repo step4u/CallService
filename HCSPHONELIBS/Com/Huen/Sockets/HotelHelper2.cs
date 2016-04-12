@@ -1009,8 +1009,8 @@ namespace Com.Huen.Sockets
                     data.extension = ext;
                     string hh = txt.Substring(8, 2);
                     string mm = txt.Substring(10, 2);
-                    int hour = string.IsNullOrEmpty(hh) == true ? 0 : int.Parse(hh);
-                    int minutes = string.IsNullOrEmpty(mm) == true ? 0 : int.Parse(mm);
+                    data.hour = string.IsNullOrEmpty(hh) == true ? 0 : int.Parse(hh);
+                    data.minutes = string.IsNullOrEmpty(mm) == true ? 0 : int.Parse(mm);
                     break;
                 case "D":
                     // 모닝콜 취소

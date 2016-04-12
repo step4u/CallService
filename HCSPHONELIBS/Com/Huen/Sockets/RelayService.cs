@@ -88,11 +88,25 @@ namespace Com.Huen.Sockets
             string t2_emer = "0";
             string t2_dnd = "0";
             string t2_mur = "0";
+            string t2_txt1 = string.Empty;
 
             switch (pmsdata.cmd)
             {
                 case STRUCTS.PMS_SET_MORNING_CALL_REQ:
                     t2_code = "C";
+                    DateTime nowdate = DateTime.Now;
+                    DateTime mcalldate = DateTime.Parse(string.Format("{0}-{1}-{2} {3:D2}:{4:D2}:00", nowdate.Year, nowdate.Month, nowdate.Day, pmsdata.hour, pmsdata.minutes));
+                    TimeSpan ts = mcalldate - nowdate;
+
+                    if (ts.TotalSeconds >= 0)
+                    {
+                        t2_txt1 = mcalldate.ToString("yyyyMMddHHmm");
+                    }
+                    else
+                    {
+                        nowdate.AddSeconds(-(ts.TotalSeconds));
+                        t2_txt1 = nowdate.ToString("yyyyMMddHHmm");
+                    }
                     break;
                 //case STRUCTS.PMS_CLEAR_MORNING_CALL_REQ:
                 //    t2_code = "D";
@@ -174,6 +188,19 @@ namespace Com.Huen.Sockets
                                 break;
                         }
                     }
+                    else if (pmsdata.function_key.Equals(fk_emergency))
+                    {
+                        switch (pmsdata.function_key_cmd)
+                        {
+                            case 1:
+                                t2_emer = "1";
+                                break;
+                            case 2:
+                            default:
+                                t2_emer = "0";
+                                break;
+                        }
+                    }
                     break;
                 case STRUCTS.PMS_REPORT_MAKEUP_STATUS_REQ:
                     switch (pmsdata.makeup_room_status)
@@ -200,7 +227,7 @@ namespace Com.Huen.Sockets
             using (MSDBHelper db = new MSDBHelper(DBServer))
             {
                 string ext = string.Format("{0:D4}", int.Parse(pmsdata.extension));
-                string sql = string.Format("insert into INF_CT02 ( T2_ROOM, T2_CODE, T2_EMER, T2_DND, T2_MUR, T2_DATE ) values ( '{0}', '{1}', '{2}', '{3}', '{4}', getdate() )", sitecode + ext, t2_code, t2_emer, t2_dnd, t2_mur);
+                string sql = string.Format("insert into INF_CT02 ( T2_ROOM, T2_CODE, T2_EMER, T2_DND, T2_MUR, T2_DATE, T2_TXT1 ) values ( '{0}', '{1}', '{2}', '{3}', '{4}', getdate(), '{5}' )", sitecode + ext, t2_code, t2_emer, t2_dnd, t2_mur, t2_txt1);
                 db.Sql = sql;
                 try
                 {
@@ -232,6 +259,7 @@ namespace Com.Huen.Sockets
         private string fk_roomservice;
         private string fk_cleaningroom_complete;
         private string fk_cleaningroom_inspection;
+        private string fk_emergency;
 
         private void ReadIni()
         {
@@ -243,6 +271,7 @@ namespace Com.Huen.Sockets
             fk_roomservice = ini.IniReadValue("functionkeys", "fk_roomservice");
             fk_cleaningroom_complete = ini.IniReadValue("functionkeys", "fk_cleaningroom_complete");
             fk_cleaningroom_inspection = ini.IniReadValue("functionkeys", "fk_cleaningroom_inspection");
+            fk_emergency = ini.IniReadValue("functionkeys", "fk_emergency");
         }
 
         private void InitTimer()
@@ -270,7 +299,6 @@ namespace Com.Huen.Sockets
             {
                 try
                 {
-                    //db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 order by T1_SITE asc, T1_ROOM asc, T1_DATE asc";
                     db.Sql = "select T1_ID, T1_SITE, T1_ROOM, T1_CODE, T1_PERIOD, T1_PROOM, T1_DATE, T1_READ, T1_READ2, T1_TXT2 from INF_CT01 where T1_READ=0 or T1_READ2=0 order by T1_DATE asc";
                     db.Open();
                     dt = db.GetDataTable();
@@ -296,7 +324,6 @@ namespace Com.Huen.Sockets
                                T_TXT2 = row[9].ToString()
                            }).ToList<TCT01>();
 
-            //var tmpdatum = tempdata.Where(x => x.T_READ == 0 || x.T_READ2 == 0);
             foreach (TCT01 item in tempdata)
             {
                 string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
@@ -311,9 +338,10 @@ namespace Com.Huen.Sockets
 
                 if (item.T_CODE.Equals("3"))
                 {
+                    roomnumberext = string.IsNullOrEmpty(item.T_PROOM) == true ? string.Empty : int.Parse(item.T_PROOM).ToString();
                     result = h2.SetSystem("0", roomnumberext, item.T_PERIOD, item.T_TXT2);
 
-                    roomnumberext = string.IsNullOrEmpty(item.T_PROOM) == true ? string.Empty : int.Parse(item.T_PROOM).ToString();
+                    roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
                     if (item.T_PERIOD.Equals("0"))
                     {
                         result = h2.SetSystem("1", roomnumberext, item.T_PERIOD, item.T_TXT2);
@@ -356,14 +384,7 @@ namespace Com.Huen.Sockets
                     {
                         try
                         {
-                            //if (string.IsNullOrEmpty(item.T_TXT2))
-                            //{
-                            //    db.Sql = string.Format("update INF_CT01 set T1_READ=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            //}
-                            //else
-                            //{
-                                db.Sql = string.Format("update INF_CT01 set T1_READ=1, T1_READ2=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            //}
+                            db.Sql = string.Format("update INF_CT01 set T1_READ=1, T1_READ2=1 where T1_SITE='{0}' and T1_ROOM='{1}' and T1_DATE=cast('{2}' as datetime)", item.T_SITE, item.T_ROOM, item.T_DATE.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
                             db.Open();
                             db.BeginTran();
@@ -412,7 +433,6 @@ namespace Com.Huen.Sockets
 
             try
             {
-                //var tempdatum2 = tempdata2.Where(x => x.T_READ == 0);
                 foreach (TCT03 item in tempdata2)
                 {
                     string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
@@ -424,8 +444,6 @@ namespace Com.Huen.Sockets
                     int count = 0;
 
                     result = h2.SetHouseKeep(item.T_CODE, roomnumberext, item.T_TXT);
-
-                    //if (!result) continue;
 
                     using (MSDBHelper db = new MSDBHelper(DBServer))
                     {
