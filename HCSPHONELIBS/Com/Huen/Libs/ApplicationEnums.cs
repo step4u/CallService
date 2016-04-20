@@ -85,4 +85,11 @@ namespace Com.Huen.Libs
         DO_CHECKOUT,
         DO_BILLING
     }
+
+    public enum RunningType
+    {
+        ROONETS,
+        CORETREE,
+        BOTH
+    }
 }

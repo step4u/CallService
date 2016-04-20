@@ -22,7 +22,7 @@ namespace TestTossServer
             //ws = new TossServer();
             this.WindowState = WindowState.Minimized;
 
-            relayserver = new RelayService(string.Empty, string.Empty, 21007);
+            relayserver = new RelayService(string.Empty, string.Empty, 21007, Com.Huen.Libs.RunningType.ROONETS);
         }
 
         void MainWindow_Closed(object sender, EventArgs e)

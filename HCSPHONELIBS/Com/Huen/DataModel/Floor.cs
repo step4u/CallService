@@ -279,7 +279,7 @@ namespace Com.Huen.DataModel
             }
         }
 
-        public _pms_data_type PMSDATA { get; set; }
+        public _cgi_pms_data_type PMSDATA { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public virtual void OnPropertyChanged(string propertyName)
@@ -344,7 +344,7 @@ namespace Com.Huen.DataModel
                         VAlignment = System.Windows.VerticalAlignment.Top
                     };
 
-                    _pms_data_type pms_data_type;
+                    _cgi_pms_data_type pms_data_type;
                     using (HotelHelper hh = new HotelHelper(util.PBXIP))
                     {
                         pms_data_type = hh.GetPolicy(_row[2].ToString());

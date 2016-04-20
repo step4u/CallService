@@ -11,8 +11,12 @@ using System.Linq;
 
 namespace Com.Huen.Sockets
 {
+    public delegate void Device2CorePmsEventHandler(object sender, _pms_data_type pmsdata);
+
     public class RelayService
     {
+        public event Device2CorePmsEventHandler Device2CorePmsEvent;
+
         private Timer timer;
         private const int timerInterval = 30000;
         private string strconnection = "Data Source={0}; Initial Catalog=INF_FDESK; Persist Security Info=True; User ID=inf_ctre; Password=ctree0211@";
@@ -20,6 +24,7 @@ namespace Com.Huen.Sockets
         private string dbserver = string.Empty;
         private string pbxip = string.Empty;
         private int pbxport = 21007;
+        private RunningType runType = RunningType.CORETREE;
 
         private HotelHelper2 h2;
 
@@ -59,31 +64,48 @@ namespace Com.Huen.Sockets
             set { this.pbxport = value; }
         }
 
-        public RelayService() : this(string.Empty, string.Empty, 21007)
+        public RunningType RunType
+        {
+            get { return this.runType; }
+            set { this.runType = value; }
+        }
+
+        public RelayService() : this(string.Empty, string.Empty, 21007, RunningType.CORETREE)
         {
         }
 
-        public RelayService(string _pbxip) : this(string.Empty, _pbxip, 21007)
+        public RelayService(string _pbxip) : this(string.Empty, _pbxip, 21007, RunningType.CORETREE)
         {
         }
 
-        public RelayService(string _dbserver, string _pbxip, int _pbxport)
+        public RelayService(string _pbxip, RunningType _runtype) : this(string.Empty, _pbxip, 21007, _runtype)
+        {
+        }
+
+        public RelayService(string _dbserver, string _pbxip, int _pbxport, RunningType _runtype)
         {
             this.ReadIni();
 
             this.DBServer = _dbserver;
             this.PBXip = _pbxip;
             this.PBXport = _pbxport;
+            this.RunType = _runtype;
 
             h2 = new HotelHelper2(PBXip, PBXport);
             h2.PassDevice2PmsEvent += H2_PassDevice2PmsEvent;
 
             //CheckRoonetsDB();
-            InitTimer();
+            if (RunType == RunningType.BOTH || RunType == RunningType.ROONETS)
+                InitTimer();
         }
 
         private void H2_PassDevice2PmsEvent(object sender, _pms_data_type pmsdata)
         {
+            if (Device2CorePmsEvent != null)
+                Device2CorePmsEvent(this, pmsdata);
+
+            if (RunType == RunningType.CORETREE) return;
+
             string t2_code = string.Empty;
             string t2_emer = "0";
             string t2_dnd = "0";
@@ -263,15 +285,15 @@ namespace Com.Huen.Sockets
 
         private void ReadIni()
         {
-            Ini ini = new Ini(".\\relay2pms.ini");
+            Ini ini = new Ini(".\\pms.ini");
             sitecode = ini.IniReadValue("SITE", "code");
-            fk_cleanroom = ini.IniReadValue("functionkeys", "fk_cleanroom");
-            fk_dnd = ini.IniReadValue("functionkeys", "fk_dnd");
-            fk_laundary = ini.IniReadValue("functionkeys", "fk_laundary");
-            fk_roomservice = ini.IniReadValue("functionkeys", "fk_roomservice");
-            fk_cleaningroom_complete = ini.IniReadValue("functionkeys", "fk_cleaningroom_complete");
-            fk_cleaningroom_inspection = ini.IniReadValue("functionkeys", "fk_cleaningroom_inspection");
-            fk_emergency = ini.IniReadValue("functionkeys", "fk_emergency");
+            fk_cleanroom = ini.IniReadValue("FUNCSKEYS", "fk_cleanroom");
+            fk_dnd = ini.IniReadValue("FUNCSKEYS", "fk_dnd");
+            fk_laundary = ini.IniReadValue("FUNCSKEYS", "fk_laundary");
+            fk_roomservice = ini.IniReadValue("FUNCSKEYS", "fk_roomservice");
+            fk_cleaningroom_complete = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_complete");
+            fk_cleaningroom_inspection = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_inspection");
+            fk_emergency = ini.IniReadValue("FUNCSKEYS", "fk_emergency");
         }
 
         private void InitTimer()
@@ -481,6 +503,11 @@ namespace Com.Huen.Sockets
             var elapsedMs = watch.ElapsedMilliseconds;
 
             Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> CheckRoonetsDB was done in " + elapsedMs + " mil.");
+        }
+
+        public void SendReplay(_pms_data_type pmsdata)
+        {
+            h2.Send(pmsdata);
         }
 
         class TCT01

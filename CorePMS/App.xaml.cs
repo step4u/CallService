@@ -30,7 +30,8 @@ namespace CorePMS
             {
                 base.OnStartup(e);
 
-                this.StartupUri = new Uri("pack://application:,,,/HCSPHONELIBS;component/Views/PMS.xaml", UriKind.RelativeOrAbsolute);
+                // this.StartupUri = new Uri("pack://application:,,,/HCSPHONELIBS;component/Views/PMS.xaml", UriKind.RelativeOrAbsolute);
+                this.StartupUri = new Uri("pack://application:,,,/HCSPHONELIBS;component/Views/CorePMS.xaml", UriKind.RelativeOrAbsolute);
             }
             else
             {

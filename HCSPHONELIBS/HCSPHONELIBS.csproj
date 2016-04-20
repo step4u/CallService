@@ -253,6 +253,9 @@
     <Compile Include="Views\BILL.xaml.cs">
       <DependentUpon>BILL.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CorePMS.xaml.cs">
+      <DependentUpon>CorePMS.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PMS.xaml.cs">
       <DependentUpon>PMS.xaml</DependentUpon>
     </Compile>
@@ -297,6 +300,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\BILL.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CorePMS.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

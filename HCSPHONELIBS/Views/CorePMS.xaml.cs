@@ -16,39 +16,217 @@ using Com.Huen.Libs;
 using Com.Huen.Sql;
 using Com.Huen.DataModel;
 using Com.Huen.Sockets;
-using Alchemy.Classes;
-using Newtonsoft.Json;
-using System.Diagnostics;
 
 namespace Com.Huen.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class PMS : MetroWindow
+    public partial class CorePMS : MetroWindow
     {
-        private AlchemyClientCS wsClient;
-        private bool loginstates = false;
+        private RelayService relayservice = null;
 
-        //private FloorRs list_floors = null;
-        //private RoomRs list_rooms = null;
-        //private TelRs list_tels = null;
-
-        public PMS()
+        public CorePMS()
         {
             InitializeComponent();
 
-            InitializeWindowsPosition();
-
-            this.Loaded += PMS_Loaded;
-            this.Closed += PMS_Closed;
+            this.ReadIni();
+            this.Loaded += CorePMS_Loaded;
+            this.Closed += CorePMS_Closed;
         }
 
-        void PMS_Closed(object sender, EventArgs e)
+        private void CorePMS_Loaded(object sender, RoutedEventArgs e)
+        {
+            relayservice = new RelayService("14.63.171.190", RunningType.CORETREE);
+            relayservice.Device2CorePmsEvent += Relayservice_Device2CorePmsEvent;
+
+            this.InitializeData();
+        }
+
+        private void Relayservice_Device2CorePmsEvent(object sender, _pms_data_type pmsdata)
+        {
+            RoomItem roomitem = null;
+
+            foreach (var floor in floors)
+            {
+                roomitem = floor.list.FirstOrDefault(x => x.RoomNum.Equals(pmsdata.extension));
+                if (roomitem == null)
+                    continue;
+                else
+                    break;
+            }
+
+            if (roomitem == null)
+            {
+                pmsdata.status = pmsdata.status = STRUCTS.PMS_STATUS_FAIL;
+                relayservice.SendReplay(pmsdata);
+                return;
+            }
+
+            try
+            {
+                switch (pmsdata.cmd)
+                {
+                    case STRUCTS.PMS_SET_MORNING_CALL_REQ:
+                        foreach (var floor in floors)
+                        {
+                            foreach (var room in floor.list)
+                            {
+                                if (room.RoomNum.Equals(pmsdata.extension))
+                                {
+                                    room.Hour = pmsdata.hour;
+                                    room.Minutes = pmsdata.minutes;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case STRUCTS.PMS_SET_LANGUAGE_REQ:
+                        foreach (var floor in floors)
+                        {
+                            foreach (var room in floor.list)
+                            {
+                                if (room.RoomNum.Equals(pmsdata.extension))
+                                {
+                                    room.Languages = pmsdata.language.ToString();
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case STRUCTS.PMS_REPORT_FUNCTION_KEY_REQ:
+                        if (pmsdata.function_key.Equals(fk_cleanroom))
+                        {
+                            switch (pmsdata.function_key_cmd)
+                            {
+                                case 1:
+                                    // 청소 신청
+                                    roomitem.States_Clean = "1";
+                                    break;
+                                case 2:
+                                default:
+                                    // 청소 신청취소
+                                    roomitem.States_Clean = "0";
+                                    break;
+                            }
+                        }
+                        else if (pmsdata.function_key.Equals(fk_dnd))
+                        {
+                            switch (pmsdata.function_key_cmd)
+                            {
+                                case 1:
+                                    // DND 신청
+                                    roomitem.States_DnD = "1";
+                                    break;
+                                case 2:
+                                default:
+                                    // DND 해제
+                                    roomitem.States_DnD = "0";
+                                    break;
+                            }
+                        }
+                        else if (pmsdata.function_key.Equals(fk_laundary))
+                        {
+                            switch (pmsdata.function_key_cmd)
+                            {
+                                case 1:
+                                    // 세탁 신청
+                                    roomitem.States_Laundary = "1";
+                                    break;
+                                case 2:
+                                default:
+                                    // 세탁 신청취소
+                                    roomitem.States_Laundary = "0";
+                                    break;
+                            }
+                        }
+                        else if (pmsdata.function_key.Equals(fk_roomservice))
+                        {
+                            switch (pmsdata.function_key_cmd)
+                            {
+                                case 1:
+                                    // 룸서비스 신청
+                                    break;
+                                case 2:
+                                default:
+                                    // 룸서비스 신청취소
+                                    break;
+                            }
+                        }
+                        //else if (pmsdata.function_key.Equals(fk_cleaningroom_complete))
+                        //{
+                        //    switch (pmsdata.function_key_cmd)
+                        //    {
+                        //        case 1:
+                        //        case 2:
+                        //        default:
+                        //            // 청소 완료
+                        //            break;
+                        //    }
+                        //}
+                        //else if (pmsdata.function_key.Equals(fk_cleaningroom_inspection))
+                        //{
+                        //    switch (pmsdata.function_key_cmd)
+                        //    {
+                        //        case 1:
+                        //        case 2:
+                        //        default:
+                        //            // 청소 확인
+                        //            break;
+                        //    }
+                        //}
+                        //else if (pmsdata.function_key.Equals(fk_emergency))
+                        //{
+                        //    switch (pmsdata.function_key_cmd)
+                        //    {
+                        //        case 1:
+                        //            // 응급 신청
+                        //            break;
+                        //        case 2:
+                        //        default:
+                        //            // 응급 해제
+                        //            break;
+                        //    }
+                        //}
+                        break;
+                    case STRUCTS.PMS_REPORT_MAKEUP_STATUS_REQ:
+                        switch (pmsdata.makeup_room_status)
+                        {
+                            case 1:
+                                // 청소 완료
+                                roomitem.States_Clean = "2";
+                                break;
+                            case 2:
+                                // 청소 완료 취소
+                                roomitem.States_Clean = "1";
+                                break;
+                            case 3:
+                                // 청소 점검 완료
+                                roomitem.States_Clean = "3";
+                                break;
+                            case 4:
+                                // 청소 점검 완료 취소
+                                roomitem.States_Clean = "1";
+                                break;
+                        }
+                        break;
+                    default:
+                        // Debug.WriteLine("Pmsserver_ReqPMSSetEvent: " + pmsdata.function_key + " // " + pmsdata.function_key_cmd);
+                        break;
+                }
+
+                relayservice.SendReplay(pmsdata);
+            }
+            catch (Exception e)
+            {
+                pmsdata.status = pmsdata.status = STRUCTS.PMS_STATUS_FAIL;
+                relayservice.SendReplay(pmsdata);
+            }
+        }
+
+        private void CorePMS_Closed(object sender, EventArgs e)
         {
             this.SavePosition();
-
-            wsClient.Dispose();
             Environment.Exit(0);
         }
 
@@ -64,215 +242,28 @@ namespace Com.Huen.Views
             ini.IniWriteValue("SERVER", "DBIP", util.DBIP);
         }
 
-        void PMS_Loaded(object sender, RoutedEventArgs e)
-        {
-            //ShowLoginDialog();
-            InitializeData();
-
-            wsClient = new AlchemyClientCS();
-            wsClient.OnConnectEvt += new AlchemyClientCS.OnConnectEventHandler(wsClient_OnConnectEvent);
-            wsClient.OnConnectedEvt += new AlchemyClientCS.OnConnectedEventHandler(wsClient_OnConnectedEvent);
-            wsClient.OnSendEvt += new AlchemyClientCS.OnSendEventHandler(wsClient_OnSendEvent);
-            wsClient.OnReceiveEvt += new AlchemyClientCS.OnReceiveEventHandler(wsClient_OnReceiveEvent);
-            wsClient.OnDisconnectEvt += new AlchemyClientCS.OnDisconnectEventHandler(wsClient_OnDisconnectEvent);
-            wsClient.OnHeartBeatTickEvt += new AlchemyClientCS.OnHeartBeatTickEventHandler(wsClient_OnHeartBeatTickEvent);
-
-            wsClient.Connect();
-        }
-
-        void wsClient_OnHeartBeatTickEvent(Object sender)
-        {
-            RequestToTossServer data = new RequestToTossServer() { Type = Com.Huen.Sockets.CommandType.HeartBeatReq, userIdentity = util.loginuserinfo.IDENTITY };
-            wsClient.Send(JsonConvert.SerializeObject(data));
-        }
-
-        void wsClient_OnDisconnectEvent(Object sender, UserContext context)
-        {
-            if (loginstates)
-                loginstates = false;
-        }
-
-        void wsClient_OnReceiveEvent(Object sender, UserContext context)
-        {
-            ResponseFromTossServer r = JsonConvert.DeserializeObject<ResponseFromTossServer>(context.DataFrame.ToString());
-            _pms_data_type pmsdata;
-            Clean c = null;
-
-            Debug.WriteLine(" >>> PMS r.Type: " + r.Type.ToString());
-
-            RoomItem roomitm = null;
-
-            switch (r.Type)
-            {
-                case Com.Huen.Sockets.CommandType.RegisterRes:
-                    // write connected indentity
-                    break;
-                case Com.Huen.Sockets.CommandType.HeartBeatRes:
-                    // write connection alive
-                    break;
-                case Com.Huen.Sockets.CommandType.Message:
-                    // process message
-                    pmsdata = JsonConvert.DeserializeObject<_pms_data_type>(r.Data.ToString());
-                    switch (pmsdata.cmd)
-                    {
-                        case STRUCTS.PMS_SET_MORNING_CALL_REQ:
-                            foreach (var floor in _floor)
-                            {
-                                foreach (var room in floor.list)
-                                {
-                                    if (room.RoomNum.Equals(pmsdata.extension))
-                                    {
-                                        room.Hour = pmsdata.hour;
-                                        room.Minutes = pmsdata.minutes;
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                        case STRUCTS.PMS_SET_LANGUAGE_REQ:
-                            foreach (var floor in _floor)
-                            {
-                                foreach (var room in floor.list)
-                                {
-                                    if (room.RoomNum.Equals(pmsdata.extension))
-                                    {
-                                        room.Languages = pmsdata.language.ToString();
-                                        break;
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                    break;
-                case Com.Huen.Sockets.CommandType.MakeupRoomReq:
-                case Com.Huen.Sockets.CommandType.MakeupRoomCancel:
-                case Com.Huen.Sockets.CommandType.MakeupRoomDone:
-                case Com.Huen.Sockets.CommandType.MakeupRoomConfirm:
-                case Com.Huen.Sockets.CommandType.LaundaryReq:
-                case Com.Huen.Sockets.CommandType.LaundaryCancel:
-                case Com.Huen.Sockets.CommandType.LaundaryDone:
-                case Com.Huen.Sockets.CommandType.ParcelExistEnd:
-                case Com.Huen.Sockets.CommandType.DnDReq:
-                case Com.Huen.Sockets.CommandType.DnDCancel:
-                    c = JsonConvert.DeserializeObject<Clean>(r.Data.ToString());
-                    break;
-                case Com.Huen.Sockets.CommandType.MorningCall:
-                    c = JsonConvert.DeserializeObject<Clean>(r.Data.ToString());
-                    if (c == null)
-                        break;
-
-                    foreach (var floor in _floor)
-                    {
-                        roomitm = floor.list.FirstOrDefault(x => x.RoomNum.Equals(c.callee));
-                        if (roomitm == null)
-                            continue;
-                        else
-                            break;
-                    }
-
-                    if (c.result == 502)
-                    {
-                        var pms = roomitm.PMSDATA;
-                        if (pms.repeat_week == 0)
-                        {
-                            roomitm.Hour = -1;
-                            roomitm.Minutes = -1;
-
-                            pms.hour = -1;
-                            pms.minutes = -1;
-                            roomitm.PMSDATA = pms;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            if (c != null)
-            {
-                foreach (var floor in _floor)
-                {
-                    roomitm = floor.list.FirstOrDefault(x => x.RoomNum.Equals(c.caller));
-                    if (roomitm == null)
-                        continue;
-                    else
-                        break;
-                }
-
-                if (roomitm == null) return;
-
-                if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomReq)
-                {
-                    roomitm.States_Clean = "1";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomCancel)
-                {
-                    roomitm.States_Clean = "0";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomDone)
-                {
-                    roomitm.States_Clean = "2";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.MakeupRoomConfirm)
-                {
-                    roomitm.States_Clean = "3";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryReq)
-                {
-                    roomitm.States_Laundary = "1";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryCancel)
-                {
-                    roomitm.States_Laundary = "0";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.LaundaryDone)
-                {
-                    roomitm.States_Laundary = "0";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.DnDReq)
-                {
-                    roomitm.States_DnD = "1";
-                }
-                else if (r.Type == Com.Huen.Sockets.CommandType.DnDCancel)
-                {
-                    roomitm.States_DnD = "0";
-                }
-            }
-            
-        }
-
-        void wsClient_OnSendEvent(Object sender, UserContext context)
-        {
-            
-        }
-
-        void wsClient_OnConnectedEvent(Object sender, UserContext context)
-        {
-            if (loginstates)
-                return;
-
-            ResponseFromTossServer data = new ResponseFromTossServer() { Type = Com.Huen.Sockets.CommandType.HeartBeatReq, Data = new _pms_data_type() };
-            wsClient.Send(JsonConvert.SerializeObject(data));
-        }
-
-        void wsClient_OnConnectEvent(Object sender, UserContext context)
-        {
-
-        }
-
-        private Floors _floor = null;
+        private Floors floors = null;
         private void InitializeData()
         {
-            _floor = new Floors();
-            tabFloor.ItemsSource = _floor;
+            floors = new Floors();
+            tabFloor.ItemsSource = floors;
 
             Languages _languages = new Languages();
             cmb_language.ItemsSource = _languages;
         }
 
-        private void InitializeWindowsPosition()
+        private string sitecode;
+        private string fk_cleanroom;
+        private string fk_dnd;
+        private string fk_laundary;
+        private string fk_roomservice;
+        private string fk_cleaningroom_complete;
+        private string fk_cleaningroom_inspection;
+        private string fk_emergency;
+
+        private void ReadIni()
         {
-            Ini ini = new Ini(@".\pms.ini");
+            Ini ini = new Ini(".\\pms.ini");
             this.Width = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "WIDTH")) ? 800 : double.Parse(ini.IniReadValue("POSITION", "WIDTH"));
             this.Height = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "HEIGHT")) ? 600 : double.Parse(ini.IniReadValue("POSITION", "HEIGHT"));
             this.Left = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "LEFT")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "LEFT"));
@@ -280,6 +271,17 @@ namespace Com.Huen.Views
 
             util.PBXIP = string.IsNullOrEmpty(ini.IniReadValue("SERVER", "PBXIP")) ? "127.0.0.1" : ini.IniReadValue("SERVER", "PBXIP");
             util.DBIP = string.IsNullOrEmpty(ini.IniReadValue("SERVER", "DBIP")) ? "127.0.0.1" : ini.IniReadValue("SERVER", "DBIP");
+
+
+            sitecode = ini.IniReadValue("SITE", "code");
+
+            fk_cleanroom = ini.IniReadValue("FUNCSKEYS", "fk_cleanroom");
+            fk_dnd = ini.IniReadValue("FUNCSKEYS", "fk_dnd");
+            fk_laundary = ini.IniReadValue("FUNCSKEYS", "fk_laundary");
+            fk_roomservice = ini.IniReadValue("FUNCSKEYS", "fk_roomservice");
+            fk_cleaningroom_complete = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_complete");
+            fk_cleaningroom_inspection = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_inspection");
+            fk_emergency = ini.IniReadValue("FUNCSKEYS", "fk_emergency");
         }
 
         private void listrooms_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -451,16 +453,6 @@ namespace Com.Huen.Views
             foreach (RoomItem item in selectedListBox.SelectedItems)
             {
                 var pmsdata = item.PMSDATA;
-                //pmsdata.allowedPrefix = string.Empty;
-                //pmsdata.forbiddenPrefix = "all";
-                //pmsdata.hour = -1;
-                //pmsdata.minutes = -1;
-                //pmsdata.try_interval = 3;
-                //pmsdata.repeat_times = 5;
-                //pmsdata.ring_duration = 120;
-                //pmsdata.language = 0;
-                //pmsdata.week = string.Empty;
-                //pmsdata.cmd = STRUCTS.PMS_SET_ALL_REQ;
 
                 bool _result = false;
                 using (HotelHelper hh = new HotelHelper(util.PBXIP))
@@ -1466,67 +1458,5 @@ namespace Com.Huen.Views
                 flyoutAbsence_grid.ItemsSource = null;
             }
         }
-
-#if false
-        private FloorR _seledtedFloorR = null;
-        private void options_floors_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count < 1) return;
-
-            FloorR item = e.AddedItems[0] as FloorR;
-            _seledtedFloorR = item;
-
-            if (item == null) return;
-
-            list_rooms = new RoomRs(item.txtFloor);
-            options_rooms.ItemsSource = list_rooms;
-        }
-
-        private void options_floors_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        {
-            if (e.EditAction == DataGridEditAction.Commit)
-            {
-                var item = (FloorR)e.Row.Item;
-                if (item.txtFloor == null)
-                {
-                    
-                }
-            }
-            else if (e.EditAction == DataGridEditAction.Cancel)
-            {
-            }
-        }
-#endif
-
-#if false
-        private void options_rooms_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count < 1) return;
-
-            RoomR item = e.AddedItems[0] as RoomR;
-
-            if (item == null) return;
-
-            list_tels = new TelRs(item.txtRoom);
-            options_tels.ItemsSource = list_tels;
-        }
-
-        private void options_floors_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
-        {
-
-        }
-
-        private void options_floors_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-            var list = (FloorRs)((DataGrid)sender).ItemsSource;
-
-            if (e.EditAction == DataGridEditAction.Commit)
-            {
-                var txt = (TextBox)e.EditingElement;
-                //list.Add(new FloorR() { txtFloor = txt.Text.Trim() });
-                _seledtedFloorR.txtFloor = txt.Text.Trim();
-            }
-        }
-#endif
     }
 }

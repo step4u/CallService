@@ -20,6 +20,18 @@ namespace Com.Huen.Sockets
         private string PBXIP = string.Empty;
         private int PBXPORT = 33003;
 
+        public string PBXIp
+        {
+            get { return this.PBXIP; }
+            set { this.PBXIP = value; }
+        }
+
+        public int PBXPort
+        {
+            get { return this.PBXPORT; }
+            set { this.PBXPORT = value; }
+        }
+
         public HotelHelper() : this ("127.0.0.1", 33003)
         {
         }
@@ -30,8 +42,8 @@ namespace Com.Huen.Sockets
 
         public HotelHelper(string _pbxip, int _pbxport)
         {
-            PBXIP = _pbxip;
-            PBXPORT = _pbxport;
+            PBXIp = _pbxip;
+            PBXPort = _pbxport;
         }
 
 
@@ -239,7 +251,7 @@ namespace Com.Huen.Sockets
 
 
         // 체크인/아웃 발신 허용/금지 조회
-        public _pms_data_type GetPolicy(string _ext)
+        public _cgi_pms_data_type GetPolicy(string _ext)
         {
             IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
             IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
@@ -247,12 +259,12 @@ namespace Com.Huen.Sockets
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
 
-            _pms_data_type pms_data_type = new _pms_data_type()
+            _cgi_pms_data_type cgi_pms_data_type = new _cgi_pms_data_type()
             {
                 cmd = STRUCTS.CGI_PMS_GET_ALL_REQ
                 , extension = _ext
             };
-            byte[] _sbuffer = util.GetBytes(pms_data_type);
+            byte[] _sbuffer = util.GetBytes(cgi_pms_data_type);
             byte[] _rbuffer = null;
 
             try
@@ -260,7 +272,7 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
+                cgi_pms_data_type = util.GetObject<_cgi_pms_data_type>(_rbuffer);
             }
             catch (SocketException ex)
             {
@@ -277,12 +289,12 @@ namespace Com.Huen.Sockets
                     states = 1;
                 }
 
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_GET_OUTGOING_POLICY_RES, status = states, extension = _ext, allowedPrefix = string.Empty, forbiddenPrefix = string.Empty };
+                cgi_pms_data_type = new _cgi_pms_data_type() { cmd = STRUCTS.CGI_PMS_GET_OUTGOING_POLICY_RES, status = states, extension = _ext, allowedPrefix = string.Empty, forbiddenPrefix = string.Empty };
             }
 
             _client.Close();
 
-            return pms_data_type;
+            return cgi_pms_data_type;
         }
 
         // 체크인/아웃 발신 허용/금지
@@ -297,7 +309,7 @@ namespace Com.Huen.Sockets
             string allowedstr = string.Empty;
             string forbiddenstr = string.Empty;
 
-            _pms_data_type pms_data_type = new _pms_data_type()
+            _cgi_pms_data_type cgi_pms_data_type = new _cgi_pms_data_type()
             {
                 cmd = STRUCTS.CGI_PMS_SET_ALL_REQ
                 , extension = _chkinroom.roomnum
@@ -351,11 +363,11 @@ namespace Com.Huen.Sockets
                 }
             }
 
-            pms_data_type.allowedPrefix = allowedstr;
-            pms_data_type.forbiddenPrefix = forbiddenstr;
+            cgi_pms_data_type.allowedPrefix = allowedstr;
+            cgi_pms_data_type.forbiddenPrefix = forbiddenstr;
             //pms_data_type.forbiddenPrefix = "";
 
-            byte[] _sbuffer = util.GetBytes(pms_data_type);
+            byte[] _sbuffer = util.GetBytes(cgi_pms_data_type);
             byte[] _rbuffer = null;
             //_cgi_res_hdr cgi_res_hdr;
 
@@ -364,21 +376,21 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
+                cgi_pms_data_type = util.GetObject<_cgi_pms_data_type>(_rbuffer);
             }
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
+                cgi_pms_data_type = new _cgi_pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
 
             bool _result = false;
 
-            if (pms_data_type.cmd == STRUCTS.CGI_PMS_SET_ALL_RES)
+            if (cgi_pms_data_type.cmd == STRUCTS.CGI_PMS_SET_ALL_RES)
             {
-                switch (pms_data_type.status)
+                switch (cgi_pms_data_type.status)
                 {
                     case 0:
                         _result = true;
@@ -399,7 +411,7 @@ namespace Com.Huen.Sockets
             return _result;
         }
 
-        public bool CheckIn(_pms_data_type pms_data_type)
+        public bool CheckIn(_cgi_pms_data_type pms_data_type)
         {
             IPEndPoint _serverEP = new IPEndPoint(IPAddress.Parse(PBXIP), PBXPORT);
             IPEndPoint _remoteEP = new IPEndPoint(IPAddress.Any, 0);
@@ -415,12 +427,12 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
+                pms_data_type = util.GetObject<_cgi_pms_data_type>(_rbuffer);
             }
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
+                pms_data_type = new _cgi_pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
@@ -460,7 +472,7 @@ namespace Com.Huen.Sockets
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
 
-            _pms_data_type pms_data_type = new _pms_data_type()
+            _cgi_pms_data_type pms_data_type = new _cgi_pms_data_type()
             {
                 cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_REQ,
                 extension = _ext,
@@ -474,12 +486,12 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
+                pms_data_type = util.GetObject<_cgi_pms_data_type>(_rbuffer);
             }
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
+                pms_data_type = new _cgi_pms_data_type() { cmd = STRUCTS.CGI_PMS_CLEAR_FUNCTION_KEY_RES, status = 1 };
             }
 
             _client.Close();
@@ -518,7 +530,7 @@ namespace Com.Huen.Sockets
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
 
-            _pms_data_type pms_data_type = new _pms_data_type()
+            _cgi_pms_data_type pms_data_type = new _cgi_pms_data_type()
             {
                 cmd = STRUCTS.CGI_PMS_SET_POST_PARCEL_REQ,
                 extension = _ext,
@@ -533,12 +545,12 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_data_type = util.GetObject<_pms_data_type>(_rbuffer);
+                pms_data_type = util.GetObject<_cgi_pms_data_type>(_rbuffer);
             }
             catch (SocketException sockex)
             {
                 util.WriteLog(sockex.Message);
-                pms_data_type = new _pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
+                pms_data_type = new _cgi_pms_data_type() { cmd = STRUCTS.CGI_PMS_SET_ALL_RES, status = 1 };
             }
 
             _client.Close();
@@ -584,8 +596,8 @@ namespace Com.Huen.Sockets
             _client.Client.ReceiveTimeout = UDP_WAITING_MISEC;
             _client.Connect(_serverEP);
 
-            _pms_data_type pms_sdata = this.GetPolicies(code, ext, period, language);
-            _pms_data_type pms_rdata = new _pms_data_type();
+            _cgi_pms_data_type pms_sdata = this.GetPolicies(code, ext, period, language);
+            _cgi_pms_data_type pms_rdata = new _cgi_pms_data_type();
 
             byte[] _sbuffer = util.GetBytes(pms_sdata);
             byte[] _rbuffer = null;
@@ -595,7 +607,7 @@ namespace Com.Huen.Sockets
                 _client.Send(_sbuffer, _sbuffer.Length);
                 _rbuffer = _client.Receive(ref _remoteEP);
 
-                pms_rdata = util.GetObject<_pms_data_type>(_rbuffer);
+                pms_rdata = util.GetObject<_cgi_pms_data_type>(_rbuffer);
 
                 if (pms_rdata.status == 0)
                 {
@@ -695,9 +707,9 @@ namespace Com.Huen.Sockets
             return result;
         }
 
-        protected _pms_data_type GetPolicies(string code, string ext, string period, string language)
+        protected _cgi_pms_data_type GetPolicies(string code, string ext, string period, string language)
         {
-            _pms_data_type data = new _pms_data_type();
+            _cgi_pms_data_type data = new _cgi_pms_data_type();
             DateTime tmpdate;
 
             switch (code)
@@ -721,6 +733,8 @@ namespace Com.Huen.Sockets
                     data.checkout_repeat_times = 2;
                     data.checkout_ring_duration = 30;
                     data.language = SetLanguage(language);
+                    data.allowedPrefix = "all";
+                    data.forbiddenPrefix = "";
                     break;
                 case "2":
                     // 숙박
@@ -736,6 +750,8 @@ namespace Com.Huen.Sockets
                     data.checkout_repeat_times = 2;
                     data.checkout_ring_duration = 30;
                     data.language = SetLanguage(language);
+                    data.allowedPrefix = "all";
+                    data.forbiddenPrefix = "";
                     break;
                 case "5":
                     // 투숙일 변경
@@ -752,13 +768,14 @@ namespace Com.Huen.Sockets
                     data.checkout_ring_duration = 30;
                     data.language = SetLanguage(language);
                     break;
+                case "O":
+                    // 정보 변경
+                    // 언어설정
+                    data.cmd = STRUCTS.CGI_PMS_SET_LANGUAGE_REQ;
+                    data.extension = ext;
+                    data.language = SetLanguage(language);
+                    break;
                 default:
-                    if (!string.IsNullOrEmpty(language))
-                    {
-                        // 언어설정
-                        data.cmd = STRUCTS.PMS_SET_LANGUAGE_REQ;
-                        data.extension = ext;
-                    }
                     break;
             }
 
