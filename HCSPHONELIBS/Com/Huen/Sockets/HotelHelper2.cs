@@ -1007,6 +1007,7 @@ namespace Com.Huen.Sockets
                     // 모닝콜 설정
                     data.cmd = STRUCTS.CGI_PMS_SET_MORNING_CALL_REQ;
                     data.extension = ext;
+                    if (txt.Length < 12) break;
                     string hh = txt.Substring(8, 2);
                     string mm = txt.Substring(10, 2);
                     data.hour = string.IsNullOrEmpty(hh) == true ? 0 : int.Parse(hh);

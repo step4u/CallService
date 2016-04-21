@@ -37,7 +37,7 @@ namespace Com.Huen.Views
 
         private void CorePMS_Loaded(object sender, RoutedEventArgs e)
         {
-            relayservice = new RelayService("14.63.171.190", RunningType.CORETREE);
+            relayservice = new RelayService("14.63.171.190", RunningType.BOTH);
             relayservice.Device2CorePmsEvent += Relayservice_Device2CorePmsEvent;
 
             this.InitializeData();

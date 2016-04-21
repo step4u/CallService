@@ -461,8 +461,8 @@ namespace Com.Huen.Sockets
                         T_DATE = (DateTime)row[6],
                     }).ToList<TCT03>();
 
-            try
-            {
+            //try
+            //{
                 foreach (TCT03 item in tempdata2)
                 {
                     string roomnumberext = string.IsNullOrEmpty(item.T_ROOM) == true ? string.Empty : int.Parse(item.T_ROOM).ToString();
@@ -493,11 +493,11 @@ namespace Com.Huen.Sockets
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                util.WriteLog(e.Message);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    util.WriteLog(e.Message);
+            //}
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
