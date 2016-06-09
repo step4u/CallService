@@ -239,7 +239,8 @@ namespace Com.Huen.Views
             ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
 
             ini.IniWriteValue("SERVER", "PBXIP", util.PBXIP);
-            ini.IniWriteValue("SERVER", "DBIP", util.DBIP);
+            ini.IniWriteValue("DB", "DBIP", util.DBIP);
+            ini.IniWriteValue("DB", "DBIP", util.DBIP);
         }
 
         private Floors floors = null;

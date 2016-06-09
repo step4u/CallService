@@ -36,6 +36,7 @@ namespace Com.Huen.Libs
         //private static string pbxip = "121.138.213.225";          //서울
         private static string pbxip = "210.126.111.55";             //대전
         private static string dbip = "127.0.0.1";
+        private static string dbpath = @"D:\FBDB\KCTV_JEJU.FDB";
 
         public static string PBXIP
         {
@@ -58,6 +59,18 @@ namespace Com.Huen.Libs
             set
             {
                 dbip = value;
+            }
+        }
+
+        public static string DBPATH
+        {
+            get
+            {
+                return dbpath;
+            }
+            set
+            {
+                dbpath = value;
             }
         }
 
@@ -570,14 +583,14 @@ namespace Com.Huen.Libs
             return dt;
         }
 
-        public static string _dbfile = @"D:\FBDB\KCTV_JEJU.FDB";
+        public static string _dbfile = @"C:\FBDB\KCTV_JEJU.FDB";
         public static string _ipaddr = "127.0.0.1";
         public static string strDBConn
         {
             get
             {
-                Ini ini = new Ini(@".\cdr.ini");
-                string _file = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILE")) == true ? _dbfile : ini.IniReadValue("DB", "FILE");
+                Ini ini = new Ini(@".\pms.ini");
+                string _file = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) == true ? _dbfile : ini.IniReadValue("DB", "FILEPATH");
                 string _ip = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) == true ? _ipaddr : ini.IniReadValue("DB", "IP");
                 string str = LoadProjectResource("DBCONSTR_FBSQL", "COMMONRES", "").ToString();
                 str = string.Format(str, _file, _ip);
