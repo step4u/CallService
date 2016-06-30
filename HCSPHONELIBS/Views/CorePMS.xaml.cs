@@ -239,8 +239,7 @@ namespace Com.Huen.Views
             ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
 
             ini.IniWriteValue("SERVER", "PBXIP", util.PBXIP);
-            ini.IniWriteValue("DB", "DBIP", util.DBIP);
-            ini.IniWriteValue("DB", "DBIP", util.DBIP);
+            ini.IniWriteValue("DB", "IP", util.DBIP);
         }
 
         private Floors floors = null;
@@ -851,6 +850,11 @@ namespace Com.Huen.Views
                             item.Hour = pmsdata.hour;
                             item.Minutes = pmsdata.minutes;
                             item.States = "1";
+
+                            item.States_Clean = "0";
+                            item.States_DnD = "0";
+                            item.States_Laundary = "0";
+                            item.States_Parcel = "0";
 
                             _seccessRoom.Add(item);
 
