@@ -435,58 +435,41 @@ namespace Com.Huen.Libs
             return output;
         }
 
-        public static void WriteLog(string logMessage)
+        public static void WriteLog(string msg)
         {
-            try
+            string userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            if (!Directory.Exists(userdatapath))
+                Directory.CreateDirectory(userdatapath);
+
+            string logpath = string.Format(@"{0}\{1}", userdatapath, "log");
+
+            if (!Directory.Exists(logpath))
+                Directory.CreateDirectory(logpath);
+
+            string logfilepath = string.Format(@"{0}\{1}{2:00}{3:00}.log", logpath, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            StreamWriter w = File.AppendText(logfilepath);
+            w.WriteLine("{0} {1}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString());
+            w.WriteLine("  :{0}", msg);
+            w.WriteLine("---------------------------------------------------");
+            w.Flush();
+            w.Close();
+
+            foreach (var logfile in System.IO.Directory.EnumerateFiles(logpath))
             {
-                if (!Directory.Exists("./log"))
-                    Directory.CreateDirectory("log");
-
-                string strPath = string.Format("./log/{0}{1:00}{2:00}.log", DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-
-                if (!File.Exists(strPath))
-                    File.CreateText(strPath);
-
-                StreamWriter __w = File.AppendText(strPath);
-                __w.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
-                __w.WriteLine("  :{0}", logMessage);
-                __w.WriteLine("---------------------------------------------------");
-                __w.Flush();
-                __w.Close();
-
-                //foreach (var logfile in System.IO.Directory.EnumerateFiles("./log"))
-                //{
-                //    if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
-                //    {
-                //        if (File.Exists(logfile))
-                //        {
-                //            File.Delete(logfile);
-                //        }
-                //    }
-                //}
-            }
-            catch(IOException __ex)
-            {
-                //Debug.WriteLine(__ex.Message);
-
-                Type __type = __ex.GetType();
-
-                Debug.WriteLine(string.Format("{0} : {1}", __type.ToString(), __ex.Message));
-
-                //if (__type == typeof(FileNotFoundException))
-                //{
-                //    Debug.WriteLine(string.Format("FileNotFoundException : {0}"), __ex.Message);
-                //}
-                //else if (__type == typeof(DirectoryNotFoundException))
-                //{
-                //    Debug.WriteLine(string.Format("FileNotFoundException : {0}"), __ex.Message);
-                //}
+                if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
+                {
+                    if (File.Exists(logfile))
+                    {
+                        File.Delete(logfile);
+                    }
+                }
             }
         }
 
         public static void WriteLog(int errcode, string msg)
         {
-            string userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "CallService");
+            string userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
 
             if (!Directory.Exists(userdatapath))
                 Directory.CreateDirectory(userdatapath);
@@ -504,14 +487,61 @@ namespace Com.Huen.Libs
             w.Flush();
             w.Close();
 
-            //foreach (var logfile in System.IO.Directory.EnumerateFiles(logpath))
-            //{
-            //    if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
-            //    {
-            //        if (File.Exists(logfile))
-            //            File.Delete(logfile);
-            //    }
-            //}
+            foreach (var logfile in System.IO.Directory.EnumerateFiles(logpath))
+            {
+                if (File.GetCreationTime(logfile) < DateTime.Now.AddMonths(-2))
+                {
+                    if (File.Exists(logfile))
+                        File.Delete(logfile);
+                }
+            }
+        }
+
+        public static void WriteLogTest2(string msg)
+        {
+            string logpath = @"D:\logtest";
+
+            if (!Directory.Exists(logpath))
+                Directory.CreateDirectory(logpath);
+
+            string logfilepath = string.Format(@"{0}\{1}{2:00}{3:00}.log", logpath, DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            StreamWriter w = File.AppendText(logfilepath);
+            w.WriteLine("{0} {1}", DateTime.Now.ToLongDateString(), DateTime.Now.ToLongTimeString());
+            w.WriteLine("  :{0}", msg);
+            w.WriteLine("---------------------------------------------------");
+            w.Flush();
+            w.Close();
+        }
+
+        public static void WriteLogTest3(string msg, string fn)
+        {
+            string userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            DateTime now = DateTime.Now;
+            string logpath = string.Format(@"{0}\{1}\{2}-{3:00}-{4:00}", userdatapath, "log", now.Year, now.Month, now.Day);
+
+            if (!Directory.Exists(logpath))
+                Directory.CreateDirectory(logpath);
+
+            string logfilepath = string.Format(@"{0}\{1}.log", logpath, fn);
+
+            using (StreamWriter w = File.AppendText(logfilepath))
+            {
+                w.WriteLine("{0} {1}", now.ToLongDateString(), now.ToLongTimeString());
+                w.WriteLine("  :{0}", msg);
+                w.WriteLine("---------------------------------------------------");
+                w.Flush();
+            }
+        }
+
+        public static string GetRecordFolder()
+        {
+            string str = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            if (!Directory.Exists(str))
+                Directory.CreateDirectory(str);
+
+            return str;
         }
 
         public static void Log2DB(string ext, string msg, string chk)
@@ -583,17 +613,19 @@ namespace Com.Huen.Libs
             return dt;
         }
 
-        public static string _dbfile = @"C:\FBDB\KCTV_JEJU.FDB";
-        public static string _ipaddr = "127.0.0.1";
         public static string strDBConn
         {
             get
             {
-                Ini ini = new Ini(@".\pms.ini");
-                string _file = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) == true ? _dbfile : ini.IniReadValue("DB", "FILEPATH");
-                string _ip = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) == true ? _ipaddr : ini.IniReadValue("DB", "IP");
+                /*
+                string userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+                Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
+                string _file = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) == true ? DBPATH : ini.IniReadValue("DB", "FILEPATH");
+                string _ip = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) == true ? DBIP : ini.IniReadValue("DB", "IP");
+                */
                 string str = LoadProjectResource("DBCONSTR_FBSQL", "COMMONRES", "").ToString();
-                str = string.Format(str, _file, _ip);
+                str = string.Format(str, DBPATH, DBIP);
                 return str;
             }
         }

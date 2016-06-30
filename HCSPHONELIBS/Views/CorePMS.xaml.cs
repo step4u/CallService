@@ -16,6 +16,7 @@ using Com.Huen.Libs;
 using Com.Huen.Sql;
 using Com.Huen.DataModel;
 using Com.Huen.Sockets;
+using System.Diagnostics;
 
 namespace Com.Huen.Views
 {
@@ -32,7 +33,12 @@ namespace Com.Huen.Views
 
             this.ReadIni();
             this.Loaded += CorePMS_Loaded;
-            this.Closed += CorePMS_Closed;
+            this.Closing += CorePMS_Closing;
+        }
+
+        private void CorePMS_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.SaveIni();
         }
 
         private void CorePMS_Loaded(object sender, RoutedEventArgs e)
@@ -224,24 +230,6 @@ namespace Com.Huen.Views
             }
         }
 
-        private void CorePMS_Closed(object sender, EventArgs e)
-        {
-            this.SavePosition();
-            Environment.Exit(0);
-        }
-
-        private void SavePosition()
-        {
-            Ini ini = new Ini(@".\pms.ini");
-            ini.IniWriteValue("POSITION", "WIDTH", this.Width.ToString());
-            ini.IniWriteValue("POSITION", "HEIGHT", this.Height.ToString());
-            ini.IniWriteValue("POSITION", "LEFT", this.Left.ToString());
-            ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
-
-            ini.IniWriteValue("SERVER", "PBXIP", util.PBXIP);
-            ini.IniWriteValue("DB", "IP", util.DBIP);
-        }
-
         private Floors floors = null;
         private void InitializeData()
         {
@@ -261,17 +249,22 @@ namespace Com.Huen.Views
         private string fk_cleaningroom_inspection;
         private string fk_emergency;
 
+        private string userdatapath = string.Empty;
+
         private void ReadIni()
         {
-            Ini ini = new Ini(".\\pms.ini");
+            userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
             this.Width = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "WIDTH")) ? 800 : double.Parse(ini.IniReadValue("POSITION", "WIDTH"));
             this.Height = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "HEIGHT")) ? 600 : double.Parse(ini.IniReadValue("POSITION", "HEIGHT"));
             this.Left = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "LEFT")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "LEFT"));
             this.Top = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "TOP")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "TOP"));
 
-            util.PBXIP = string.IsNullOrEmpty(ini.IniReadValue("SERVER", "PBXIP")) ? "127.0.0.1" : ini.IniReadValue("SERVER", "PBXIP");
-            util.DBIP = string.IsNullOrEmpty(ini.IniReadValue("SERVER", "DBIP")) ? "127.0.0.1" : ini.IniReadValue("SERVER", "DBIP");
-
+            util.PBXIP = string.IsNullOrEmpty(ini.IniReadValue("PBX", "IP")) ? "127.0.0.1" : ini.IniReadValue("PBX", "IP");
+            util.DBIP = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) ? "127.0.0.1" : ini.IniReadValue("DB", "IP");
+            util.DBPATH = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) ? @"D:\FBDB\KCTV_JEJU.FDB" : ini.IniReadValue("DB", "FILEPATH");
 
             sitecode = ini.IniReadValue("SITE", "code");
 
@@ -284,6 +277,20 @@ namespace Com.Huen.Views
             fk_emergency = ini.IniReadValue("FUNCSKEYS", "fk_emergency");
         }
 
+        private void SaveIni()
+        {
+            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
+            ini.IniWriteValue("POSITION", "WIDTH", this.Width.ToString());
+            ini.IniWriteValue("POSITION", "HEIGHT", this.Height.ToString());
+            ini.IniWriteValue("POSITION", "LEFT", this.Left.ToString());
+            ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
+
+            ini.IniWriteValue("PBX", "IP", util.PBXIP);
+            ini.IniWriteValue("DB", "IP", util.DBIP);
+            ini.IniWriteValue("DB", "FILEPATH", util.DBPATH);
+        }
+
         private void listrooms_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox _listbox = (ListBox)sender;
@@ -291,7 +298,9 @@ namespace Com.Huen.Views
             {
                 if ((_listbox.SelectedItems[0] as RoomItem).States != (e.AddedItems[0] as RoomItem).States)
                 {
-                    ShowAlertDialog("같은 상태의 방만 선택할 수 있습니다.", (int)AlertDelaySec.Normal);
+                    // ShowAlertDialog("같은 상태의 방만 선택할 수 있습니다.", (int)AlertDelaySec.Normal);
+                    ShowAlertDialog("Can choose rooms in only the same status.", (int)AlertDelaySec.Normal);
+                    
                     _listbox.SelectedItems.Remove(e.AddedItems[0]);
                     return;
                 }
@@ -353,7 +362,7 @@ namespace Com.Huen.Views
                     MenuItem mi = (MenuItem)cm.Items[i];
                     if (i > 0)
                     {
-                        if (mi.Header.ToString().Contains("빌링"))
+                        if (mi.Header.ToString().Contains("Bill"))
                         {
                             mi.IsEnabled = true;
                         }
@@ -527,12 +536,14 @@ namespace Com.Huen.Views
             int alertsec = 0;
             if (string.IsNullOrEmpty(_failRoom))
             {
-                alertmsg = "체크아웃 설정이 완료 되었습니다.";
+                // alertmsg = "체크아웃 설정이 완료 되었습니다.";
+                alertmsg = "Check Out has been done.";
                 alertsec = (int)AlertDelaySec.Success;
             }
             else
             {
-                alertmsg = string.Format("체크아웃 실패\r\n방번호 : {0}", _failRoom);
+                // alertmsg = string.Format("체크아웃 실패\r\n방번호 : {0}", _failRoom);
+                alertmsg = string.Format("Fail to check-out\r\nRoom Number : {0}", _failRoom);
                 alertsec = (int)AlertDelaySec.Fail;
             }
 
@@ -890,11 +901,13 @@ namespace Com.Huen.Views
             {
                 if (NOWACT == PMSBEH.DO_CHECKIN)
                 {
-                    alertmsg = "체크인 설정이 완료 되었습니다.";
+                    // alertmsg = "체크인 설정이 완료 되었습니다.";
+                    alertmsg = "Check In has been done.";
                 }
                 else
                 {
-                    alertmsg = "설정 수정이 완료 되었습니다.";
+                    // alertmsg = "설정 수정이 완료 되었습니다.";
+                    alertmsg = "Modications have been done.";
                 }
                 
                 alertsec = (int)AlertDelaySec.Success;
@@ -903,11 +916,13 @@ namespace Com.Huen.Views
             {
                 if (NOWACT == PMSBEH.DO_CHECKIN)
                 {
-                    alertmsg = string.Format("체크인 실패\r\n방번호 : {0}", _failRoom);
+                    // alertmsg = string.Format("체크인 실패\r\n방번호 : {0}", _failRoom);
+                    alertmsg = string.Format("Fail to check-in\r\nRoom Number : {0}", _failRoom);
                 }
                 else
                 {
-                    alertmsg = string.Format("실패\r\n방번호 : {0}", _failRoom);
+                    // alertmsg = string.Format("실패\r\n방번호 : {0}", _failRoom);
+                    alertmsg = string.Format("Fail\r\nRoom Number : {0}", _failRoom);
                 }
                 
                 alertsec = (int)AlertDelaySec.Success;
@@ -981,7 +996,8 @@ namespace Com.Huen.Views
             {
                 if (mcall_hour.Value == null || mcall_minutes.Value == null)
                 {
-                    ShowAlertDialog("모닝콜 시간이 설정되지 않았습니다.\r\n시:분을 설정 후 반복 요일을 선택하세요.", (int)AlertDelaySec.Normal);
+                    // ShowAlertDialog("모닝콜 시간이 설정되지 않았습니다.\r\n시:분을 설정 후 반복 요일을 선택하세요.", (int)AlertDelaySec.Normal);
+                    ShowAlertDialog("Morning call didn't set yet.\r\nAfter setting Hours and Minutes, choose repeat days.", (int)AlertDelaySec.Normal);
                     cb.IsChecked = false;
                     return;
                 }
@@ -1139,6 +1155,14 @@ namespace Com.Huen.Views
                     // succeed
                 }
             }
+        }
+
+        private void tmenu_options0_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo("explorer.exe");
+            psi.WindowStyle = ProcessWindowStyle.Normal;
+            psi.Arguments = util.GetRecordFolder();
+            Process.Start(psi);
         }
 
         private void tmenu_options_Click(object sender, RoutedEventArgs e)

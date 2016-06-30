@@ -77,21 +77,22 @@
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>-->
-            <Button x:Name="tmenu_log" ToolTip="로그" Content="Logs" Click="tmenu_log_Click" />
-            <Button x:Name="tmenu_absence" ToolTip="부재중 통화" Content="Absence" Click="tmenu_absence_Click"/>
+            <Button x:Name="tmenu_log" ToolTip="Logs" Content="Logs" Click="tmenu_log_Click" />
+            <Button x:Name="tmenu_absence" ToolTip="Unanswered Call" Content="Absence" Click="tmenu_absence_Click"/>
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
 
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button x:Name="tmenu_options" ToolTip="옵션" Content="Options" Click="tmenu_options_Click" />
+            <Button x:Name="tmenu_options0" ToolTip="Environment Folder" Content="Ini Folder" Click="tmenu_options0_Click" />
+            <Button x:Name="tmenu_options" ToolTip="Options" Content="Options" Click="tmenu_options_Click" />
             <!--Button ToolTip="도움" Content="help" /-->
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="checkinFlyout" Header="체크인" Position="Right" Theme="Accent" ClosingFinished="checkinFlyout_ClosingFinished" IsVisibleChanged="checkinFlyout_IsVisibleChanged">
+            <Controls:Flyout x:Name="checkinFlyout" Header="Check In" Position="Right" Theme="Accent" ClosingFinished="checkinFlyout_ClosingFinished" IsVisibleChanged="checkinFlyout_IsVisibleChanged">
                 <Grid Margin="30,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150" />
@@ -99,7 +100,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0">
-                        <TextBlock Text="방 번 호" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                        <TextBlock Text="Room Number" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
                         <ListBox x:Name="checkinFlyout_lb" Grid.Column="0" Margin="0,35,0,0" BorderThickness="0" ItemsSource="{Binding}" SelectedIndex="0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="130" ScrollViewer.HorizontalScrollBarVisibility="Hidden" SelectionChanged="checkinFlyout_lb_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -123,20 +124,20 @@
                             </Style>
                         </StackPanel.Resources>
                         <Grid>
-                            <TextBlock Text="옵션" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                            <TextBlock Text="Option" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top"/>
                         </Grid>
                         <StackPanel x:Name="swtoptions" Orientation="Vertical" Margin="0,10,0,0">
                             <StackPanel Orientation="Vertical" Width="350">
                                 <Grid>
-                                    <TextBlock Text="국제전화" FontSize="14" VerticalAlignment="Center" />
+                                    <TextBlock Text="International" FontSize="14" VerticalAlignment="Center" />
                                     <Controls:ToggleSwitch Style="{DynamicResource CustomMetroToggleSwitch}" IsChecked="True" VerticalAlignment="Center" IsCheckedChanged="switch1_IsCheckedChanged" />
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
-                                    <TextBlock Text="이동전화" FontSize="14" VerticalAlignment="Center" />
+                                    <TextBlock Text="Mobile" FontSize="14" VerticalAlignment="Center" />
                                     <Controls:ToggleSwitch Style="{DynamicResource CustomMetroToggleSwitch}" IsChecked="True" VerticalAlignment="Center" IsCheckedChanged="switch1_IsCheckedChanged" />
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
-                                    <TextBlock Text="국내전화" FontSize="14" VerticalAlignment="Center" />
+                                    <TextBlock Text="Domestic" FontSize="14" VerticalAlignment="Center" />
                                     <Controls:ToggleSwitch Style="{DynamicResource CustomMetroToggleSwitch}" IsChecked="True" VerticalAlignment="Center" IsCheckedChanged="switch1_IsCheckedChanged"/>
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
@@ -145,9 +146,9 @@
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                        <Controls:NumericUpDown x:Name="mcall_hour" Width="95" Controls:TextBoxHelper.Watermark="시" Interval="1" Minimum="-1" Maximum="24" StringFormat=" {0}시" ValueChanged="mcall_hour_ValueChanged" />
-                                        <Controls:NumericUpDown x:Name="mcall_minutes" Margin="15,0,0,0" Width="95" Controls:TextBoxHelper.Watermark="분" Interval="5" Minimum="-1" Maximum="55" StringFormat=" {0}분" ValueChanged="mcall_minutes_ValueChanged" />
-                                        <CheckBox x:Name="mcallRepeat" Margin="10,0,0,0" Content="반복" Foreground="White" Click="mcallRepeat_Click" />
+                                        <Controls:NumericUpDown x:Name="mcall_hour" Width="95" Controls:TextBoxHelper.Watermark="Hour" Interval="1" Minimum="-1" Maximum="24" StringFormat=" {0}H" ValueChanged="mcall_hour_ValueChanged" />
+                                        <Controls:NumericUpDown x:Name="mcall_minutes" Margin="15,0,0,0" Width="95" Controls:TextBoxHelper.Watermark="Min" Interval="5" Minimum="-1" Maximum="55" StringFormat=" {0}M" ValueChanged="mcall_minutes_ValueChanged" />
+                                        <CheckBox x:Name="mcallRepeat" Margin="10,0,0,0" Content="Repeat" Foreground="White" Click="mcallRepeat_Click" />
                                     </StackPanel>
                                 </Grid>
                                 <Grid x:Name="repeat_week" Margin="0,8,0,0" Visibility="Collapsed">
@@ -157,7 +158,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="일"/>
+                                                            <TextBlock Text="Sun"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -168,7 +169,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="월"/>
+                                                            <TextBlock Text="Mon"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -179,7 +180,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="화"/>
+                                                            <TextBlock Text="Tue"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -190,7 +191,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="수"/>
+                                                            <TextBlock Text="Wed"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -201,7 +202,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="목"/>
+                                                            <TextBlock Text="Thu"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -212,7 +213,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="금"/>
+                                                            <TextBlock Text="Fri"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -223,7 +224,7 @@
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill">
                                                         <VisualBrush.Visual>
-                                                            <TextBlock Text="토"/>
+                                                            <TextBlock Text="Sat"/>
                                                         </VisualBrush.Visual>
                                                     </VisualBrush>
                                                 </Rectangle.OpacityMask>
@@ -368,24 +369,24 @@
                     <ListBox x:Name="listrooms" Margin="40,0,0,0" ItemsSource="{Binding list}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="listrooms_SelectionChanged" SelectionMode="Multiple" PreviewMouseRightButtonDown="listrooms_PreviewMouseRightButtonDown" ContextMenuOpening="listrooms_ContextMenuOpening">
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem x:Name="contextmenu0" Header="체크인 (_I)" Click="contextmenu0_Click"/>
-                                <MenuItem x:Name="contextmenu1" Header="수정 (_M)" Click="contextmenu1_Click"/>
+                                <MenuItem x:Name="contextmenu0" Header="Check In (_I)" Click="contextmenu0_Click"/>
+                                <MenuItem x:Name="contextmenu1" Header="Modify (_M)" Click="contextmenu1_Click"/>
                                 <!--MenuItem x:Name="contextmenu2" Header="방변경 (_C)" Click="contextmenu2_Click"/-->
                                 <!--<MenuItem x:Name="contextmenu3" Header="빌링 (_B)" Click="contextmenu3_Click"/>-->
-                                <MenuItem x:Name="contextmenu4" Header="체크아웃 (_O)" Click="contextmenu4_Click" />
+                                <MenuItem x:Name="contextmenu4" Header="Check Out (_O)" Click="contextmenu4_Click" />
                                 <Separator/>
-                                <MenuItem x:Name="contextmenu6" Header="청소">
-                                    <MenuItem x:Name="contextmenu6_sub0" Header="요청" Click="contextmenu6_sub0_Click"/>
-                                    <MenuItem x:Name="contextmenu6_sub1" Header="완료" Click="contextmenu6_sub1_Click"/>
-                                    <MenuItem x:Name="contextmenu6_sub2" Header="컨펌" Click="contextmenu6_sub2_Click"/>
+                                <MenuItem x:Name="contextmenu6" Header="Cleaning">
+                                    <MenuItem x:Name="contextmenu6_sub0" Header="Request" Click="contextmenu6_sub0_Click"/>
+                                    <MenuItem x:Name="contextmenu6_sub1" Header="Done" Click="contextmenu6_sub1_Click"/>
+                                    <MenuItem x:Name="contextmenu6_sub2" Header="Confirm" Click="contextmenu6_sub2_Click"/>
                                 </MenuItem>
-                                <MenuItem x:Name="contextmenu7" Header="세탁">
-                                    <MenuItem x:Name="contextmenu7_sub0" Header="요청" Click="contextmenu7_sub0_Click"/>
-                                    <MenuItem x:Name="contextmenu7_sub1" Header="완료" Click="contextmenu7_sub1_Click"/>
+                                <MenuItem x:Name="contextmenu7" Header="Laundry">
+                                    <MenuItem x:Name="contextmenu7_sub0" Header="Request" Click="contextmenu7_sub0_Click"/>
+                                    <MenuItem x:Name="contextmenu7_sub1" Header="Done" Click="contextmenu7_sub1_Click"/>
                                 </MenuItem>
-                                <MenuItem x:Name="contextmenu5" Header="우편물">
-                                    <MenuItem x:Name="contextmenu5_sub0" Header="수령 요청" Click="contextmenu5_sub0_Click"/>
-                                    <MenuItem x:Name="contextmenu5_sub1" Header="수령 완료" Click="contextmenu5_sub1_Click"/>
+                                <MenuItem x:Name="contextmenu5" Header="Postal Matter">
+                                    <MenuItem x:Name="contextmenu5_sub0" Header="Request" Click="contextmenu5_sub0_Click"/>
+                                    <MenuItem x:Name="contextmenu5_sub1" Header="Done" Click="contextmenu5_sub1_Click"/>
                                 </MenuItem>
                             </ContextMenu>
                         </ListBox.ContextMenu>
