@@ -88,7 +88,7 @@ namespace COMMONRES.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User=USER1;Password=omega9363;Database=&apos;{0}&apos;;DataSource={1};Port=3050;Dialect=3;Charset=UTF8;Role=;Connection lifetime=15; Pooling=true;Packet Size=8192;ServerType=0.
+        ///   Looks up a localized string similar to User=USER1;Password=omega936;Database=&apos;{0}&apos;;DataSource={1};Port=3050;Dialect=3;Charset=UTF8;Role=;Connection lifetime=15; Pooling=true;Packet Size=8192;ServerType=0.
         /// </summary>
         internal static string DBCONSTR_FBSQL {
             get {

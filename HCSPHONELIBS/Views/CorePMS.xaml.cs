@@ -1205,9 +1205,10 @@ namespace Com.Huen.Views
                 util.PBXIP = pbxip.Text.Trim();
                 util.DBIP = dbip.Text.Trim();
 
-                Ini ini = new Ini(@".\pms.ini");
-                ini.IniWriteValue("SERVER", "PBXIP", util.PBXIP);
-                ini.IniWriteValue("SERVER", "DBIP", util.DBIP);
+                Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
+                ini.IniWriteValue("PBX", "IP", util.PBXIP);
+                ini.IniWriteValue("DB", "IP", util.DBIP);
             }
         }
 

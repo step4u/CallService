@@ -242,7 +242,7 @@
     <value>비밀번호를 입력해 주세요.</value>
   </data>
   <data name="DBCONSTR_FBSQL" xml:space="preserve">
-    <value>User=USER1;Password=omega9363;Database='{0}';DataSource={1};Port=3050;Dialect=3;Charset=UTF8;Role=;Connection lifetime=15; Pooling=true;Packet Size=8192;ServerType=0</value>
+    <value>User=USER1;Password=omega936;Database='{0}';DataSource={1};Port=3050;Dialect=3;Charset=UTF8;Role=;Connection lifetime=15; Pooling=true;Packet Size=8192;ServerType=0</value>
   </data>
   <data name="TEXT_TREE_DEPART_ROOT" xml:space="preserve">
     <value>부서명</value>

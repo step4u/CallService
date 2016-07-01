@@ -141,14 +141,14 @@
                                     <Controls:ToggleSwitch Style="{DynamicResource CustomMetroToggleSwitch}" IsChecked="True" VerticalAlignment="Center" IsCheckedChanged="switch1_IsCheckedChanged"/>
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
-                                    <TextBlock Text="언어" FontSize="14" VerticalAlignment="Center" />
+                                    <TextBlock Text="Language" FontSize="14" VerticalAlignment="Center" />
                                     <ComboBox x:Name="cmb_language" Margin="0, 0, 120, 0" Width="95" HorizontalAlignment="Right" Controls:TextBoxHelper.ClearTextButton="False" ItemsSource="{Binding}" DisplayMemberPath="LangStr" SelectedValuePath="LangCode" SelectedIndex="0"  SelectionChanged="cmb_language_SelectionChanged" />
                                 </Grid>
                                 <Grid Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                         <Controls:NumericUpDown x:Name="mcall_hour" Width="95" Controls:TextBoxHelper.Watermark="Hour" Interval="1" Minimum="-1" Maximum="24" StringFormat=" {0}H" ValueChanged="mcall_hour_ValueChanged" />
                                         <Controls:NumericUpDown x:Name="mcall_minutes" Margin="15,0,0,0" Width="95" Controls:TextBoxHelper.Watermark="Min" Interval="5" Minimum="-1" Maximum="55" StringFormat=" {0}M" ValueChanged="mcall_minutes_ValueChanged" />
-                                        <CheckBox x:Name="mcallRepeat" Margin="10,0,0,0" Content="Repeat" Foreground="White" Click="mcallRepeat_Click" />
+                                        <CheckBox x:Name="mcallRepeat" Margin="5,0,0,0" Content="Repeat" Foreground="White" Click="mcallRepeat_Click" />
                                     </StackPanel>
                                 </Grid>
                                 <Grid x:Name="repeat_week" Margin="0,8,0,0" Visibility="Collapsed">
