@@ -41,9 +41,60 @@ namespace Com.Huen.Views
             this.SaveIni();
         }
 
+        private string sitecode;
+        private string fk_cleanroom;
+        private string fk_dnd;
+        private string fk_laundry;
+        private string fk_roomservice;
+        private string fk_cleaningroom_complete;
+        private string fk_cleaningroom_inspection;
+        private string fk_emergency;
+
+        private string userdatapath = string.Empty;
+
+        private void ReadIni()
+        {
+            userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
+            this.Width = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "WIDTH")) ? 800 : double.Parse(ini.IniReadValue("POSITION", "WIDTH"));
+            this.Height = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "HEIGHT")) ? 600 : double.Parse(ini.IniReadValue("POSITION", "HEIGHT"));
+            this.Left = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "LEFT")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "LEFT"));
+            this.Top = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "TOP")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "TOP"));
+
+            util.PBXIP = string.IsNullOrEmpty(ini.IniReadValue("PBX", "IP")) ? "127.0.0.1" : ini.IniReadValue("PBX", "IP");
+            util.DBIP = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) ? "127.0.0.1" : ini.IniReadValue("DB", "IP");
+            util.DBPATH = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) ? @"D:\FBDB\KCTV_JEJU.FDB" : ini.IniReadValue("DB", "FILEPATH");
+
+            sitecode = ini.IniReadValue("SITE", "code");
+
+            fk_cleanroom = ini.IniReadValue("FUNCTIONKEYS", "fk_cleanroom");
+            fk_dnd = ini.IniReadValue("FUNCTIONKEYS", "fk_dnd");
+            fk_laundry = ini.IniReadValue("FUNCTIONKEYS", "fk_laundry");
+            fk_roomservice = ini.IniReadValue("FUNCTIONKEYS", "fk_roomservice");
+            fk_cleaningroom_complete = ini.IniReadValue("FUNCTIONKEYS", "fk_cleaningroom_complete");
+            fk_cleaningroom_inspection = ini.IniReadValue("FUNCTIONKEYS", "fk_cleaningroom_inspection");
+            fk_emergency = ini.IniReadValue("FUNCTIONKEYS", "fk_emergency");
+        }
+
+        private void SaveIni()
+        {
+            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
+            ini.IniWriteValue("POSITION", "WIDTH", this.Width.ToString());
+            ini.IniWriteValue("POSITION", "HEIGHT", this.Height.ToString());
+            ini.IniWriteValue("POSITION", "LEFT", this.Left.ToString());
+            ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
+
+            ini.IniWriteValue("PBX", "IP", util.PBXIP);
+            ini.IniWriteValue("DB", "IP", util.DBIP);
+            ini.IniWriteValue("DB", "FILEPATH", util.DBPATH);
+        }
+
         private void CorePMS_Loaded(object sender, RoutedEventArgs e)
         {
-            relayservice = new RelayService("14.63.171.190", RunningType.BOTH);
+            relayservice = new RelayService(util.PBXIP, RunningType.BOTH);
             relayservice.Device2CorePmsEvent += Relayservice_Device2CorePmsEvent;
 
             this.InitializeData();
@@ -131,7 +182,7 @@ namespace Com.Huen.Views
                                     break;
                             }
                         }
-                        else if (pmsdata.function_key.Equals(fk_laundary))
+                        else if (pmsdata.function_key.Equals(fk_laundry))
                         {
                             switch (pmsdata.function_key_cmd)
                             {
@@ -238,57 +289,6 @@ namespace Com.Huen.Views
 
             Languages _languages = new Languages();
             cmb_language.ItemsSource = _languages;
-        }
-
-        private string sitecode;
-        private string fk_cleanroom;
-        private string fk_dnd;
-        private string fk_laundary;
-        private string fk_roomservice;
-        private string fk_cleaningroom_complete;
-        private string fk_cleaningroom_inspection;
-        private string fk_emergency;
-
-        private string userdatapath = string.Empty;
-
-        private void ReadIni()
-        {
-            userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
-
-            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
-
-            this.Width = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "WIDTH")) ? 800 : double.Parse(ini.IniReadValue("POSITION", "WIDTH"));
-            this.Height = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "HEIGHT")) ? 600 : double.Parse(ini.IniReadValue("POSITION", "HEIGHT"));
-            this.Left = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "LEFT")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "LEFT"));
-            this.Top = string.IsNullOrEmpty(ini.IniReadValue("POSITION", "TOP")) ? 50 : double.Parse(ini.IniReadValue("POSITION", "TOP"));
-
-            util.PBXIP = string.IsNullOrEmpty(ini.IniReadValue("PBX", "IP")) ? "127.0.0.1" : ini.IniReadValue("PBX", "IP");
-            util.DBIP = string.IsNullOrEmpty(ini.IniReadValue("DB", "IP")) ? "127.0.0.1" : ini.IniReadValue("DB", "IP");
-            util.DBPATH = string.IsNullOrEmpty(ini.IniReadValue("DB", "FILEPATH")) ? @"D:\FBDB\KCTV_JEJU.FDB" : ini.IniReadValue("DB", "FILEPATH");
-
-            sitecode = ini.IniReadValue("SITE", "code");
-
-            fk_cleanroom = ini.IniReadValue("FUNCSKEYS", "fk_cleanroom");
-            fk_dnd = ini.IniReadValue("FUNCSKEYS", "fk_dnd");
-            fk_laundary = ini.IniReadValue("FUNCSKEYS", "fk_laundary");
-            fk_roomservice = ini.IniReadValue("FUNCSKEYS", "fk_roomservice");
-            fk_cleaningroom_complete = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_complete");
-            fk_cleaningroom_inspection = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_inspection");
-            fk_emergency = ini.IniReadValue("FUNCSKEYS", "fk_emergency");
-        }
-
-        private void SaveIni()
-        {
-            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
-
-            ini.IniWriteValue("POSITION", "WIDTH", this.Width.ToString());
-            ini.IniWriteValue("POSITION", "HEIGHT", this.Height.ToString());
-            ini.IniWriteValue("POSITION", "LEFT", this.Left.ToString());
-            ini.IniWriteValue("POSITION", "TOP", this.Top.ToString());
-
-            ini.IniWriteValue("PBX", "IP", util.PBXIP);
-            ini.IniWriteValue("DB", "IP", util.DBIP);
-            ini.IniWriteValue("DB", "FILEPATH", util.DBPATH);
         }
 
         private void listrooms_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1278,6 +1278,12 @@ namespace Com.Huen.Views
             UpdateCleanStates(e, "3");
         }
 
+        private void contextmenu6_sub3_Click(object sender, RoutedEventArgs e)
+        {
+            // 프런트 > 청소 아이콘 클리어
+            UpdateCleanStates(e, "0");
+        }
+
         private void contextmenu7_sub0_Click(object sender, RoutedEventArgs e)
         {
             // 프런트 > 세탁 요청
@@ -1293,7 +1299,7 @@ namespace Com.Huen.Views
         private void UpdateCleanStates(RoutedEventArgs e, string states)
         {
             // 프런트 > 청소요청
-            // states 1:요청, 2:완료, 3:컨펌
+            // states 1:요청, 2:완료, 3:컨펌, 4:클리어아이콘
 
             MenuItem menuItem = (MenuItem)e.Source;
             ContextMenu contextMenu = (ContextMenu)((MenuItem)menuItem.Parent).Parent;
@@ -1332,6 +1338,10 @@ namespace Com.Huen.Views
                         else if (states == "3")
                         {
                             _msg = "CONFIRMED";
+                        }
+                        else if (states == "0")
+                        {
+                            _msg = "CLEAR ICON";
                         }
 
                         util.Log2DB(item.RoomNum, string.Format("CLEANING {0} : {1}", _msg, item.RoomNum), "1");

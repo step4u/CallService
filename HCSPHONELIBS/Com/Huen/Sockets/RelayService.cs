@@ -162,7 +162,7 @@ namespace Com.Huen.Sockets
                                 break;
                         }
                     }
-                    else if (pmsdata.function_key.Equals(fk_laundary))
+                    else if (pmsdata.function_key.Equals(fk_laundry))
                     {
                         switch (pmsdata.function_key_cmd)
                         {
@@ -277,23 +277,29 @@ namespace Com.Huen.Sockets
         private string sitecode;
         private string fk_cleanroom;
         private string fk_dnd;
-        private string fk_laundary;
+        private string fk_laundry;
         private string fk_roomservice;
         private string fk_cleaningroom_complete;
         private string fk_cleaningroom_inspection;
         private string fk_emergency;
 
+        private string userdatapath;
+
         private void ReadIni()
         {
-            Ini ini = new Ini(".\\pms.ini");
+            userdatapath = string.Format(@"{0}\{1}", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CorePMS");
+
+            Ini ini = new Ini(string.Format(@"{0}\{1}", userdatapath, "pms.ini"));
+
             sitecode = ini.IniReadValue("SITE", "code");
-            fk_cleanroom = ini.IniReadValue("FUNCSKEYS", "fk_cleanroom");
-            fk_dnd = ini.IniReadValue("FUNCSKEYS", "fk_dnd");
-            fk_laundary = ini.IniReadValue("FUNCSKEYS", "fk_laundary");
-            fk_roomservice = ini.IniReadValue("FUNCSKEYS", "fk_roomservice");
-            fk_cleaningroom_complete = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_complete");
-            fk_cleaningroom_inspection = ini.IniReadValue("FUNCSKEYS", "fk_cleaningroom_inspection");
-            fk_emergency = ini.IniReadValue("FUNCSKEYS", "fk_emergency");
+
+            fk_cleanroom = ini.IniReadValue("FUNCTIONKEYS", "fk_cleanroom");
+            fk_dnd = ini.IniReadValue("FUNCTIONKEYS", "fk_dnd");
+            fk_laundry = ini.IniReadValue("FUNCTIONKEYS", "fk_laundry");
+            fk_roomservice = ini.IniReadValue("FUNCTIONKEYS", "fk_roomservice");
+            fk_cleaningroom_complete = ini.IniReadValue("FUNCTIONKEYS", "fk_cleaningroom_complete");
+            fk_cleaningroom_inspection = ini.IniReadValue("FUNCTIONKEYS", "fk_cleaningroom_inspection");
+            fk_emergency = ini.IniReadValue("FUNCTIONKEYS", "fk_emergency");
         }
 
         private void InitTimer()

@@ -379,6 +379,7 @@
                                     <MenuItem x:Name="contextmenu6_sub0" Header="Request" Click="contextmenu6_sub0_Click"/>
                                     <MenuItem x:Name="contextmenu6_sub1" Header="Done" Click="contextmenu6_sub1_Click"/>
                                     <MenuItem x:Name="contextmenu6_sub2" Header="Confirm" Click="contextmenu6_sub2_Click"/>
+                                    <MenuItem x:Name="contextmenu6_sub3" Header="Clear Icon" Click="contextmenu6_sub3_Click"/>
                                 </MenuItem>
                                 <MenuItem x:Name="contextmenu7" Header="Laundry">
                                     <MenuItem x:Name="contextmenu7_sub0" Header="Request" Click="contextmenu7_sub0_Click"/>

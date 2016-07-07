@@ -108,7 +108,7 @@ namespace Com.Huen.Sockets
 
                 CdrRequest_t _cdr = util.GetObject<CdrRequest_t>(_databuffer);
                 CdrList _cdrdata = util.GetObject<CdrList>(_cdr.data);
-                this.CdrToDB(_cdr, _cdrdata);
+                // this.CdrToDB(_cdr, _cdrdata);
 
                 if (RequestCDREvent != null)
                     RequestCDREvent(this, _cdr.cmd, _cdrdata.caller, _cdrdata.callee, _cdrdata.result);
